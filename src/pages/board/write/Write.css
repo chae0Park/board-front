@@ -1,0 +1,114 @@
+/*font*/
+@font-face {
+    font-family: 'MaruBuri';
+    src: url(https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Regular.eot?#iefix) format("embedded-opentype"), url(https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Regular.woff2) format("woff2"), url(https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Regular.woff) format("woff"), url(https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Regular.ttf) format("truetype");
+}
+
+.Write{
+    width: 70vw;
+    height: 100vh;
+    /* border: 1px solid black; */
+    position: relative;
+    left: 14%;
+    /* top: 8px; */
+
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.write-title{
+    height: 8%;
+    padding-left: 10px;
+    margin-bottom: 35px;
+}
+
+.write-title-input{
+    font-weight: bold;
+    position: relative;
+    top: 16px;
+}
+
+.write-title-inputbox{
+    font-size: 40px;
+    width: 67vw;
+    border: none;
+    /* border-bottom: solid #aaaaaa 1px; */
+    font-family: 'MaruBuri';
+    outline: none;
+}
+
+.write-detail-container1{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+
+    padding-right: 20px;
+
+    /* border: 1px solid black; */
+    
+}
+
+.w-detail-author-profile, .w-detail-author-id, .w-detail-author-date{
+    margin-right: 5px;
+}
+
+.write-detail-author-info{
+    /* border: 1px solid black; */
+    
+    display: flex;
+    align-items: center;
+}
+
+.w-detail-author-profile{
+    width: 50px;
+    height: 50px;
+    
+    
+}
+
+img{
+    width: 100%;
+    height: 100%;
+    border-radius: 100%;
+}
+
+.detail-divide{
+    width: 70vw;
+    height: 1px;
+    background-color: gray;
+    margin-bottom: 44px;
+}
+
+
+.detail-container2{
+    width: 70vw;
+    height: 80vh;
+    /* border: 1px solid tomato;     */
+}
+.detail-content{
+    background-color: beige;
+    height: 80%;
+    font-size: 18px;
+}
+
+.write-content{
+    font-family: 'MaruBuri';
+    width: 100%;
+    height: 64vh;
+    border: none;
+    resize: none;
+    font-size: 16px;
+    background-color: beige;
+    position: relative;
+    top: 40px;
+}
+
+.write-submit-btn{
+    margin-top: 20px;
+    position: absolute;
+    right: 15px;
+    bottom: -100px;
+}
+
+

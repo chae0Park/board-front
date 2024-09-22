@@ -1,0 +1,75 @@
+.SignUp{
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+}
+
+.signup{
+    /* border: 1px solid rgb(35, 35, 35); */
+    margin-bottom: 20px;
+}
+
+.signup-container{
+    width: 415px;
+    height: 700px;
+    border-radius: 2%;
+    padding: 25px;
+    box-shadow: 0px 0px 15px  gray;
+}
+
+.top{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    padding-left: 10px;
+    padding-right: 10px;
+    
+}
+
+.top-title{
+    font-size: 25px;
+    font-weight: bold;
+    /* border: 1px solid black; */
+    padding-left:29px ;
+}
+
+.email-container, .password-container, .nickname-container, .phone-container, .address1-container, .address2-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding-left: 15px;
+}
+
+.bottom-border{
+    width: 90%;
+    height: 22px;
+    border-width: 0 0 1px;
+}
+
+.signup-btn{
+    background-color: black;
+    color: white;
+    width: 90%;
+    height: 42px;
+    border-radius: 25px;
+    cursor: pointer;
+}
+
+
+.have-account{
+    display: flex;
+    justify-content: center;
+    font-size: 13px;
+
+    position: relative;
+    bottom: 127px;
+}
+
+
+
+/*  왼쪽정렬
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; */

@@ -1,0 +1,112 @@
+
+/*font*/
+@font-face {
+    font-family: 'MaruBuri';
+    src: url(https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Regular.eot?#iefix) format("embedded-opentype"), url(https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Regular.woff2) format("woff2"), url(https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Regular.woff) format("woff"), url(https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Regular.ttf) format("truetype");
+}
+
+
+/*작업크기 설정*/
+.Post-container{
+    width: 48vw;
+    height: 24vh;
+    background-color: white;
+    border-radius: 10px;
+    
+    margin-left: 50px;
+    /*최신게시물에서 사용할 때 마다 아래가 붙지않도록*/
+    margin-bottom: 20px;
+
+    font-family: 'MaruBuri';
+}
+
+.Post-content{
+    position:relative;
+    left: 23px;
+    top: 17px;
+    /* border: 1px solid black; */
+}
+
+/*사진 | 아이디, 글작성날짜 */
+.Post-top{
+    display: flex;
+    margin-bottom: 10px;
+}
+
+.Post-user-info, .Post-mid, .Post-btm{
+    text-align: left;
+}
+
+
+
+/* 프로필 이미지 */
+img{
+    width: 100%;
+    height: 100%;
+    
+}
+
+.Post-img{
+    
+    height: 40px;
+    width: 40px;
+    border: none;
+    margin-right: 10px;
+
+    
+}
+
+.Post-profile-img{
+    border-radius: 100%;
+    /* object-fit: fill; */
+}
+
+.Post-date{
+    font-size: 11px;
+}
+
+
+/*본문내용*/
+
+.Post-mid{
+    width: 35vw;
+}
+
+.Post-mid-title{
+    margin-bottom: 4px;
+    font-weight: 600;
+}
+.Post-mid-content{
+    font-size: 13px;
+    margin-bottom: 2px;
+}
+
+/* 가장 아래부분 가로 정렬*/
+.Post-btm{
+    display: flex;
+    font-size: 11px;
+
+    position: relative;
+    top: 12px;
+}
+
+/*오른쪽 섬네일 이미지*/
+.Post{
+    display: flex;
+    justify-content: space-between;
+}
+
+.post-content-img{
+    
+    width: 172px;
+    height: 152px;
+    
+    position: relative;
+    right: 32px;
+    top: 8px
+}
+
+.post-content-img-src{
+    border-radius: 10px;
+}
+

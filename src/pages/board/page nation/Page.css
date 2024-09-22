@@ -1,0 +1,15 @@
+
+.Page-container{
+    display: flex;
+   justify-content: center;
+   padding-top: 8px;
+}
+
+.Page-container > div{
+    margin: 0 12px 0;   
+}
+
+.prev-page, .next-page{
+    font-weight: bold;
+}
+

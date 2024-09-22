@@ -1,0 +1,99 @@
+@font-face {
+    font-family: 'MaruBuri';
+    src: url(https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Regular.eot?#iefix) format("embedded-opentype"), url(https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Regular.woff2) format("woff2"), url(https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Regular.woff) format("woff"), url(https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Regular.ttf) format("truetype");
+}
+
+.Detail{
+    width: 70vw;
+    height: 110vh;
+    /* border: 1px solid black; */
+
+    position: relative;
+    left: 14%;
+    top: 14px;
+
+    padding: 20px;
+    font-family: 'MaruBuri';
+}
+
+.detail-title{
+    /* border: 1px solid black; */
+    height: 8%;
+    padding-left: 10px;
+}
+
+.detail-title-writing{
+    font-size: 25px;
+    font-weight: bold;
+    position: relative;
+    top: 16px;
+    /* border: 1px solid tomato; */
+
+}
+
+.detail-container1{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+
+    padding-right: 20px;
+
+    /* border: 1px solid black; */
+    
+}
+
+.detail-author-profile, .detail-author-id, .detail-author-date{
+    margin-right: 5px;
+}
+
+.detail-author-info{
+    /* border: 1px solid black; */
+    
+    display: flex;
+    align-items: center;
+}
+
+.detail-author-profile{
+    width: 50px;
+    height: 50px;
+    
+    
+}
+
+img{
+    width: 100%;
+    height: 100%;
+    border-radius: 100%;
+}
+
+.detail-divide{
+    width: 70vw;
+    height: 1px;
+    background-color: gray;
+    margin-bottom: 44px;
+}
+
+
+.detail-container2{
+    width: 70vw;
+    height: 80vh;
+    /* border: 1px solid tomato;     */
+}
+.detail-content{
+    background-color: beige;
+    height: 80%;
+}
+
+.detail-content{
+    font-size: 18px;
+}
+
+.detail-like-comment{
+    display: flex;
+    font-size: 15px;
+    margin-top: 10px;
+
+}
+
+

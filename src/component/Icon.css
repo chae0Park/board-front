@@ -1,0 +1,17 @@
+.Icon{
+    display: flex;
+    align-items: center; 
+    justify-content: center;
+   
+}
+
+button{
+    margin: 0 5px 0;
+    font-size: 14px;
+    color: rgb(152, 152, 152);
+    border-radius: 20px;
+    border: none;
+    box-shadow: 0 0 5px gray;
+    width: 6vw;
+    height: 5vh;
+}

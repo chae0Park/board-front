@@ -1,0 +1,27 @@
+.SideBar{
+    width: 22vw;
+    height: 45vh;   
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 0 0 8px rgb(204, 204, 204);
+    
+
+    /**/
+    position: relative;
+    right: 45px;
+    top:68px;
+    
+}
+
+.SideBar-title{
+    font-size: 20px;
+    text-align: left;
+    padding: 25px;
+    font-weight: bold;
+    margin: 10px 0 10px;
+}
+
+.SideBar-icon-container{
+    display: flex;
+    justify-content: center;
+}

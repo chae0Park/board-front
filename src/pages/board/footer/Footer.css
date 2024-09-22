@@ -1,0 +1,53 @@
+@font-face {
+    font-family: 'MaruBuri';
+    src: url(https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Regular.eot?#iefix) format("embedded-opentype"), url(https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Regular.woff2) format("woff2"), url(https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Regular.woff) format("woff"), url(https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Regular.ttf) format("truetype");
+}
+
+.Footer{
+    width: 100vw;
+    height: 20vh;
+    background-color: rgba(70, 70, 70, 0.826);
+    display: flex;
+    justify-content: space-around;
+
+    font-family: 'MaruBuri';
+    color: white;
+    
+}
+
+.Footer-left-top{
+    display: flex;
+    align-items: end;
+    /* border: 1px solid white; */
+    height: 8vh;
+    
+}
+
+.site-logo{
+    margin-left: 10px;
+    margin-right: 8px;
+    font-size: large;
+}
+
+.Footer-desc{
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+.Footer-instagram, .Footer-github{
+    width: 40px;
+    height: 40px;
+    /* background-color: white; */
+
+    margin-left: 8px;
+    margin-right: 8px;
+}
+
+
+.Footer-right{
+    display: flex;
+    align-items: center;
+    /* border: 1px solid white; */
+    height: 15vh;
+    font-size: 13px;
+}

@@ -1,0 +1,80 @@
+@font-face {
+    font-family: 'MaruBuri';
+    src: url(https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Regular.eot?#iefix) format("embedded-opentype"), url(https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Regular.woff2) format("woff2"), url(https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Regular.woff) format("woff"), url(https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Regular.ttf) format("truetype");
+}
+
+.left-title, .login-btn, .header-writing {
+    font-family: 'MaruBuri';
+    font-weight: bold;
+}
+
+
+.Header{
+    display: flex;
+    height: 20vh;
+    /* background-color: antiquewhite;
+    border: 1px solid black; */
+
+}
+
+
+.header-container1{
+    display: flex;    
+    position:absolute;
+    left: 15%;
+    top: 5%;
+}
+
+.left-img, .left-title{
+   
+    height: 60px;
+    font-size: 20px;
+
+}
+
+.header-container2{
+    display: flex;
+    position:absolute;
+    right: 13%;
+    top: 4%;
+}
+
+/*돋보기 아이콘*/
+.search-icon{
+    width: 32px;
+    height: 32px;
+    margin-right: 8px;
+    background-color: 100%;
+}
+
+img {
+    width: 100%;
+    height: 100%;
+}
+
+/*로그인 버튼*/
+/* .login-btn{
+    background: black;
+    color: white;
+    border-radius: 20px;
+    width: 110px;
+    height: 30px;
+    font-size: 15px;
+    border: 0;
+    outline: 0;
+} */
+
+.login-btn {
+    font-size: 15px;
+    border-color: black;
+    color: #fff;
+    box-shadow: 0 0 40px 40px black inset, 0 0 0 0 black;
+    transition: all 200ms ease-in-out;
+    
+    &:hover {
+      box-shadow: 0 0 10px 0 black inset, 0 0 10px 4px black;
+      color: black;
+      cursor: pointer;
+    }
+  }
+
