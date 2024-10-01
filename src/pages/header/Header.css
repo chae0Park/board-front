@@ -52,17 +52,6 @@ img {
     height: 100%;
 }
 
-/*로그인 버튼*/
-/* .login-btn{
-    background: black;
-    color: white;
-    border-radius: 20px;
-    width: 110px;
-    height: 30px;
-    font-size: 15px;
-    border: 0;
-    outline: 0;
-} */
 
 .login-btn {
     font-size: 15px;
@@ -77,4 +66,18 @@ img {
       cursor: pointer;
     }
   }
+
+.logout-btn, .mypage-btn{
+    font-size: 15px;
+    border-color: rgb(197, 197, 197);
+    color: #a1a1a1;
+    box-shadow: 0 0 40px 40px rgb(197, 197, 197) inset, rgb(197, 197, 197) black;
+    transition: all 200ms ease-in-out;
+    
+    &:hover {
+      box-shadow: 0 0 10px 0 rgb(197, 197, 197) inset, 0 0 10px 4px rgb(197, 197, 197);
+      color: rgb(171, 171, 171);
+      cursor: pointer;
+    }
+}
 

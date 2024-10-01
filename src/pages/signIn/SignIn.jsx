@@ -1,14 +1,42 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './SignIn.css';
-import { useForm } from "react-hook-form";
+import { useState } from 'react';
+import { loginUser } from '../../features/authSlice'; 
+import { useDispatch, useSelector } from 'react-redux';
+import Modal from '../../component/Modal';
 
 const SignIn = () => {
+    const [ formData, setFormData ] = useState({ email:'', password:'', });
+    const [ errorMessage, setErrorMessage ] = useState('');
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
-    const {
-        register,
-        handleSubmit,
-        formState: { isSubmitting, isSubmitted, errors },
-    } = useForm();
+    const onNavigate = () => {
+        navigate('/');
+    }
+
+    //data update
+    const user = useSelector((state) => state.auth.user);
+    
+    const handleChange = (e) => {
+        setFormData({...formData, [e.target.name]: e.target.value });
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try{
+            await dispatch(loginUser(formData));
+            setErrorMessage('');
+            onNavigate();
+        }catch (error) {
+            setErrorMessage(error.response?.data.message || 'User not exists');
+        }
+    }
+
+    const handleCloseModal = () => {
+        setErrorMessage('');
+        setFormData({email: '', password: '',})
+    }
 
     return(
         <div className="SignIn">
@@ -18,29 +46,18 @@ const SignIn = () => {
                     <div className="signin top-title">로그인</div>
                 </div>
 
-                <form
-                    onSubmit={handleSubmit(async (data) => {
-                        await new Promise((r) => setTimeout(r,1000));
-                        alert(JSON.stringify(data));
-                    })}
-                >
+                <form onSubmit={handleSubmit}>
                     <div className="signin email">
                         <div className='email-container'>
                             <div  className='signin-email'>이메일주소</div>
                             <input type='email' 
-                            id='email'
+                            name='email'
                             className='bottom-border' 
-                            placeholder= {errors.email ? errors.email.message : '이메일을 입력해주세요'}
-                            aria-invalid={
-                                isSubmitted ? (errors.email ? "true" : "false") : undefined
-                            }
-                            {...register("email", {
-                                required: "이메일은 필수 입력입니다.",
-                                pattern: {
-                                    value: /\S+@\S+\.\S+/,
-                                    message: "이메일 형식에 맞지 않습니다."
-                                },
-                            })}
+                            placeholder= {'이메일을 입력해주세요'}
+                            
+                            value={formData.email}
+                            onChange={handleChange}
+                            required
                             />            
                         </div>                       
                     </div>
@@ -51,19 +68,11 @@ const SignIn = () => {
                             <div className='signin-pw'>비밀번호</div>
                             <input 
                             type='password'
-                            id='password'
+                            name='password'
                             className='bottom-border' 
-                            placeholder={errors.password ? errors.password.message : '비밀번호를 입력해주세요'}
-                            aria-invalid={
-                                isSubmitted ? (errors.password ? "true" : "false") : undefined
-                            }
-                            {...register("password", {
-                                required: "비밀번호는 필수 입력입니다.",
-                                minLength: {
-                                    value: 8,
-                                    message: "8자리 이상 비밀번호를 입력해주세요"
-                                },
-                            })}
+                            placeholder={'비밀번호를 입력해주세요'}
+                            value={formData.password}
+                            onChange={handleChange}
                             />
                             
                         </div>       
@@ -73,16 +82,15 @@ const SignIn = () => {
                     {/* 로그인버튼 */}
                     <button className='signIn-btn'
                     type='submit'
-                    disabled={isSubmitting}
                     >로그인</button>
-
+                    <p><Modal message={errorMessage} onClose={handleCloseModal} /></p>
                 </form>
 
                 <div className="signup bottom">       
                     <div className='have-account'>
                         <div className='account-yn'>신규 사용자이신가요?</div>
                         <div>
-                            <Link to={'/pages/signUp/SignUpFirst'} 
+                            <Link to={'/register'} 
                             style={{ textDecoration: "none", color: "gray"}}>
                                 회원가입
                             </Link>

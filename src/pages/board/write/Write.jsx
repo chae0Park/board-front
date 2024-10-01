@@ -1,5 +1,4 @@
 import Footer from '../footer/Footer';
-import { useForm } from 'react-hook-form';
 import './Write.css';
 
 const Write = () => {

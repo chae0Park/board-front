@@ -1,11 +1,14 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './SignUpFirst.css';
-import Header from '../board/header/Header';
+import Header from '../header/Header';
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { registerUser } from '../../features/authSlice';
+import Modal from '../../component/Modal';
 
-const SignUpFirst = ({ onCreateUser }) => {
+const SignUpFirst = () => {
     //여러개의 input값을 가져와야 할 때 default
-    const [ info, setInfo ] = useState({
+    const [ formData, setFormData ] = useState({
         email: '',
         password: '',
         nickname: '',
@@ -14,20 +17,42 @@ const SignUpFirst = ({ onCreateUser }) => {
         addressDetail: '',
         agreedPersonal: false,
     });
+    const [ errorMessage,setErrorMessage ] = useState('');
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
-    const { email, password, nickname, telNumber, address, addressDetail } = info;
+    const onNavigate = () => {
+        navigate('/signin');
+    }
 
-    //여러개의 input을 State로 관리할 때 
+    //const { email, password, nickname, telNumber, address, addressDetail } = info;
+
+  
     const onChangeInfo = (e) => {
-        const { value, name } = e.target;
-        setInfo({...info, [name]:value }); // email: 'a123@gmail.com'
+        setFormData({...formData, [e.target.name]: e.target.value }); // email: 'a123@gmail.com'
 
     };
 
-    //onCreateUser 함수 호출 
-    const onSubmit = (e) => {
-        e.preventDefault();// it doesn’t refresh the page when the page is refreshed
-        onCreateUser(info);
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try{
+            await dispatch(registerUser(formData));
+            setErrorMessage('');
+            onNavigate();
+        }catch (error) {
+            setErrorMessage(error.response?.data.message || 'Registration failed');
+        }
+    };
+
+    const handleCloseModal = () => {
+        setErrorMessage('');
+        setFormData({email: '',
+            password: '',
+            nickname: '',
+            telNumber: '',
+            address: '',
+            addressDetail: '',
+            agreedPersonal: false,});
     };
 
     return (
@@ -39,7 +64,7 @@ const SignUpFirst = ({ onCreateUser }) => {
                     <div className="signup top-title">회원가입</div>
                 </div>
 
-                <form onSubmit={onSubmit}>
+                <form onSubmit={handleSubmit}>
                     <div className="signup email">
                         <div className='email-container'>
                             <div className='signup-email'>이메일주소*</div>
@@ -47,7 +72,7 @@ const SignUpFirst = ({ onCreateUser }) => {
                                 className='bottom-border'
                                 type='email'
                                 placeholder='이메일을 입력해주세요'
-                                value={email}
+                                value={formData.email}
                                 name='email'
                                 onChange={onChangeInfo}
                             />     
@@ -61,7 +86,7 @@ const SignUpFirst = ({ onCreateUser }) => {
                                 className='bottom-border'
                                 type='password'
                                 placeholder='8~15자 이내, 대문자와 특수기호를 포함해주세요.'
-                                value={password}
+                                value={formData.password}
                                 name='password'
                                 onChange={onChangeInfo}
                             />
@@ -85,7 +110,7 @@ const SignUpFirst = ({ onCreateUser }) => {
                                 <div  className='mid-content'>닉네임*</div>
                                 <input className='bottom-border' 
                                     placeholder='닉네임을 입력해주세요'
-                                    value={nickname}
+                                    value={formData.nickname}
                                     name='nickname'
                                     onChange={onChangeInfo}
                                 />   
@@ -99,7 +124,7 @@ const SignUpFirst = ({ onCreateUser }) => {
                             <input 
                                 className='bottom-border' 
                                 placeholder='핸드폰 번호를 입력해주세요'
-                                value={telNumber}
+                                value={formData.telNumber}
                                 name='telNumber'
                                 onChange={onChangeInfo}
                             />
@@ -113,7 +138,7 @@ const SignUpFirst = ({ onCreateUser }) => {
                             <input 
                                 className='bottom-border' 
                                 placeholder='주소를 입력해주세요'
-                                value={address}
+                                value={formData.address}
                                 name='address'
                                 onChange={onChangeInfo}
                             />
@@ -127,7 +152,7 @@ const SignUpFirst = ({ onCreateUser }) => {
                             <input 
                                 className='bottom-border' 
                                 placeholder='상세주소를 입력해주세요'
-                                value={addressDetail}
+                                value={formData.addressDetail}
                                 name='addressDetail'
                                 onChange={onChangeInfo}
                                 />
@@ -143,6 +168,7 @@ const SignUpFirst = ({ onCreateUser }) => {
                     >
                         회원가입
                     </button>
+                    <p><Modal message={errorMessage} onClose={handleCloseModal} /></p>
                 </form>
 
                 <div className="signup bottom">
