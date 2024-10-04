@@ -8,7 +8,7 @@ import './Post.css';
 // 포스트안에 보여줄 때 글자제한 필요
 const Post = () => {
     return(
-        <div class="Post-container">
+        <div className="Post-container">
             <div className='Post'>         
                 <div className='Post-content'>
 
