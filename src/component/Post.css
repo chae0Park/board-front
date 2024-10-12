@@ -90,7 +90,7 @@ img{
     top: 12px;
 }
 
-/*오른쪽 섬네일 이미지*/
+오른쪽 섬네일 이미지
 .Post{
     display: flex;
     justify-content: space-between;

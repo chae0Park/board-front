@@ -9,6 +9,7 @@ import MyPage from './pages/mypage/MyPage';
 
 
 
+
 function App() {
 
 
@@ -22,6 +23,7 @@ function App() {
           <Route path='/register' element={<SignUpFirst />} />
           <Route path='/mypage' element={<MyPage />} />
           <Route path='/write' element={<Write />} />
+          <Route path='/detail/:id' element={<Detail />} />
         </Routes>
     </div>
   );

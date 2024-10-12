@@ -3,8 +3,8 @@ import axios from "axios";
 
 
 const initialState = {
-    user: JSON.parse(localStorage.getItem('user')) || null, // 새로고침 시 로컬스토리지에서 불러오기
-    token: localStorage.getItem('token') || null, // 새로고침 시 토큰도 로컬스토리지에서 불러오기
+    user: JSON.parse(sessionStorage.getItem('user')) || null, // 새로고침 시 로컬스토리지에서 불러오기
+    token: sessionStorage.getItem('token') || null, // 새로고침 시 토큰도 로컬스토리지에서 불러오기
 };
 
 const authSlice = createSlice({
@@ -14,26 +14,26 @@ const authSlice = createSlice({
         loginSuccess: (state, action) => {
             state.user = action.payload.user;
             state.token = action.payload.token;
-            // localStorage에 user와 token 저장
-            localStorage.setItem('user', JSON.stringify(state.user));
-            localStorage.setItem('token', action.payload.token);
+            // sessionStorage에 user와 token 저장
+            sessionStorage.setItem('user', JSON.stringify(state.user));
+            sessionStorage.setItem('token', action.payload.token);
         },
         logoutSuccess: (state) => {
             state.user = null;
             state.token = null;
-             // 로그아웃 시 localStorage에서 삭제
-             localStorage.removeItem('user');
-             localStorage.removeItem('token');
+             // 로그아웃 시 sessionStorage에서 삭제
+             sessionStorage.removeItem('user');
+             sessionStorage.removeItem('token');
         },
         setUserProfile: (state, action) => {
             state.user = action.payload; // 사용자 정보를 업데이트
-            localStorage.setItem('user', JSON.stringify(state.user)); // 업데이트된 사용자 정보를 로컬 스토리지에 저장
+            sessionStorage.setItem('user', JSON.stringify(state.user)); // 업데이트된 사용자 정보를 로컬 스토리지에 저장
         },
         profileImageUploadSuccess: (state, action) => {
             // 프로필 이미지가 성공적으로 업로드되었을 때, user 상태 업데이트
             if (state.user) {
                 state.user.profileImage = action.payload.profileImage;
-                localStorage.setItem('user', JSON.stringify(state.user)); // 업데이트된 유저 정보를 localStorage에 저장
+                sessionStorage.setItem('user', JSON.stringify(state.user)); // 업데이트된 유저 정보를 sessionStorage에 저장
             }
         }
     },
@@ -55,7 +55,7 @@ export const loginUser = (formData) => async (dispatch) => {
     try{
         const response = await axios.post('http://localhost:5000/api/login', formData);
         dispatch(loginSuccess(response.data));
-        localStorage.setItem('token', response.data.token);
+        sessionStorage.setItem('token', response.data.token);
     } catch (error) {
         throw error;
     }
@@ -80,7 +80,7 @@ export const fetchUserProfile = (userId) => async (dispatch, getState) => {
 
 
 export const logoutUser = () => (dispatch) => {
-    localStorage.removeItem('token');
+    sessionStorage.removeItem('token');
     dispatch(logoutSuccess());
 };
 

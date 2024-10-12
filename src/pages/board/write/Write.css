@@ -22,6 +22,27 @@
     margin-bottom: 35px;
 }
 
+.write-file{
+    position: relative;
+    top: 22px;
+    left: 74%;
+}
+
+/* 인풋- 파일 */
+  input[type="file"]::file-selector-button {
+    width: 150px;
+    height: 30px;
+    background: #fff;
+    border: 1px solid rgb(77,77,77);
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+input[type="file"]:hover::file-selector-button {
+    background-color: rgb(77,77,77);
+    color: #fff;
+}
+
 .write-title-input{
     font-weight: bold;
     position: relative;

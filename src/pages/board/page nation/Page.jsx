@@ -1,20 +1,44 @@
+import { useState } from 'react';
 import './Page.css';
 
-const Page = () => {
+const Page = ({ totalPosts, postsPerPage, paginate }) => {
+    const [currentPageSet, setCurrentPageSet] = useState(0);
+    const totalPages = Math.ceil((totalPosts / postsPerPage)-1); // 전체 페이지수 :totalPages
+    const pagesPerSet = 5; // 0~ 몇 개 까지를 최대로 보여줄지 정함 : pagesPerSet
+    const startPage = currentPageSet * pagesPerSet;
+    const endPage = Math.min(startPage + pagesPerSet - 1, totalPages);
+
+    const pageNumbers = [];
+    for (let i = startPage; i <= endPage; i++) {
+        if (i >= 0) pageNumbers.push(i); // 페이지 번호가 0 이상일 때만 추가
+    }
+
+    const handlePageClick = (number) => {
+        console.log('페이지 클릭:', number); // 추가된 로그
+        paginate(number); // 현재 페이지 설정
+    };// 유저가 누른 페이지에 해당하는 숫자를 paginate에 넘겨줌 (렌더링과 상관없이 바로 이뤄지는 작업)
+
+
     return(
-        // < 이전 | 1 2 3 4 5~ 10 | 다음 >
         <div className='Page'>
-            <div className='Page-container'>
-                <div className='prev-page'> &lt; 이전</div>
-                <div className='Page-1'>1</div>
-                <div className='Page-2'>2</div>
-                <div className='Page-3'>3</div>
-                <div className='Page-4'>4</div>
-                <div className='Page-5'>5</div>
-                <div className='next-page'>다음  &gt; </div>
-            </div>
-            
+        <div className='Page-container'>
+            {currentPageSet > 0 && (
+                <div className='prev-page' onClick={() => setCurrentPageSet(currentPageSet - 1)}>
+                    &lt; 이전
+                </div>
+            )}
+            {pageNumbers.map((number) => (
+                <div key={number} className={`pagebtn Page-${number}`} onClick={() => handlePageClick(number)}>
+                    {number+1} {/* 사용자에게는 1부터 보여주기 */}
+                </div>
+            ))}
+            {endPage < totalPages && (
+                <div className='next-page' onClick={() => setCurrentPageSet(currentPageSet + 1)}>
+                    다음 &gt;
+                </div>
+            )}
         </div>
+    </div>
     )
 }
 

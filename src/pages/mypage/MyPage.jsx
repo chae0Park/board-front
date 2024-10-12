@@ -12,13 +12,9 @@ const MyPage = () => {
         if (user) {
             dispatch(fetchUserProfile(user.id)); // 사용자 정보를 가져오는 액션 호출
         }
+
     }, [dispatch, user]);
-
-    if (!user) {
-        return <div>Loading...</div>; // 사용자 정보가 로드 중일 때 표시할 메시지
-    }
-
-
+  
     const handleFileChange = (event) => {
         const file = event.target.files[0];
         setSelectedFile(file); // 선택한 파일을 상태에 저장
@@ -32,6 +28,11 @@ const MyPage = () => {
             alert('Please select a file to upload.'); // 파일이 선택되지 않았을 때 알림
         }
     };
+
+
+    if (!user) {
+        return <div>Loading...</div>; // 사용자 정보가 로드 중일 때 표시할 메시지
+    }
 
     return (
         <div>

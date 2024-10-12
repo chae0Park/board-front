@@ -7,9 +7,16 @@
 
 .Page-container > div{
     margin: 0 12px 0;   
+    width: 30px;
+    height: 30px;
+    text-align: center;
 }
 
 .prev-page, .next-page{
     font-weight: bold;
 }
 
+.pagebtn:hover {
+    background: silver;
+    border-radius: 50%;
+  }
