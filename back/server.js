@@ -9,9 +9,10 @@ const path = require('path'); //로컬 서버 사용을 위해path 임포트
 const PORT = 5000;
 const mongoose = require('mongoose');
 const User = require('./model/User'); // User 모델 임포트
-const {Post,Comment,Reply} = require('./model/Post'); // Post 모델 임포트 
+const Post = require('./model/Post'); // Post 모델 임포트 
+const Comment = require('./model/Comment');// Comment 모델 임포트
 const upload = require('./middleware/upload');
-const { SourceTextModule } = require('vm');
+//const { SourceTextModule } = require('vm');
 const { v4: uuidv4 } = require('uuid');
 
 //토큰 검증 시 사용되는 사인 혹은 도장임. - 위에 JWT_SECRET 명시해뒀음  
@@ -91,6 +92,17 @@ const authenticateToken = (req, res, next) => {
         res.status(403).json({ message: 'Invalid token' });
     }
 };
+
+//jwt 연장 시간 늘리기
+app.post('/api/extend-session', authenticateToken, (req, res) => {
+    // Create a new token with the same payload
+    const token = jwt.sign(
+        { id: req.user._id, email: req.user.email, nickname: req.user.nickname, profileImage: req.user.profileImage }, 
+        jwtSecret, 
+        { expiresIn: '1h' }
+    );
+    res.status(200).json({ token });
+});
 
 // User Profile Route (GET)
 app.get('/api/users/:id', authenticateToken, async (req, res) => {
@@ -182,50 +194,46 @@ app.post('/api/logout', authenticateToken, (req, res) => {
 
 
 
-//==================================================================
-
-
-//try-catch 문으로 만든 버전, 위에꺼 작동안하면 이서 사용하면됨
+//post method==================================================================
+//글 작성 하기 전, 로그인 한 유저만  글 쓸 수 있게 authentication 처리 
 app.post('/api/post', upload.array('files', 5), async (req, res) => {
-    console.log("post got called!!!")
+    console.log("post got called!!!");
     try {
-
-        if(!req.headers.authorization){
+        if (!req.headers.authorization) {
             return res.status(401).json({ error: 'Authorization header is missing' });
         }
-        
 
-        // Decode JWT to get the user info (assuming token is in authorization header)
+        // Decode JWT to get the user info
         const token = req.headers.authorization.split(' ')[1];
         const decoded = jwt.verify(token, jwtSecret);
-        const userNickname = decoded.nickname; // Assuming 'nickname' is in the JWT payload
-        const profileImage = decoded.profileImage; //newly added
         const userId = decoded.id; // Assuming 'id' is in the JWT payload
 
         const { title, content } = req.body;
         // Get the uploaded file paths
-        const filePaths = req.files.map(file => file.path);
+        //const filePaths = req.files.map(file => file.path);
+        const filePaths = req.files.map(file => `/uploads/${file.filename}`);
+
+        // 최신 프로필 이미지를 가져오기
+        const user = await User.findById(userId); // userId를 사용하여 현재 유저 정보를 조회
+        const profileImage = user.profileImage; // 최신 프로필 이미지를 가져오기
 
         // Create a new post with the logged-in user's nickname and file paths
         const newPost = new Post({
             title,
             content,
-            author: userNickname,
-            profileImage: profileImage,
+            author: decoded.nickname, // 여전히 nickname을 사용
+            profileImage: profileImage, // 최신 프로필 이미지 사용
             userId, // Include userId
             createdAt: Date.now(),
-            files: filePaths // Store file paths in the post
+            files: filePaths, // Store file paths in the post
+            comments: [] // 빈 배열로 초기화
         });
 
         // Save the post
         const savedPost = await newPost.save();
 
-        // Console log the unique post ID
-        console.log('New Post ID:', savedPost.post_id); // 또는 savedPost._id로 Mongoose의 기본 ID 확인 가능
-        console.log('Comment ID:', savedPost.comment_id);
-        console.log('Reply ID:', savedPost.reply_id);
         res.status(201).json(savedPost);
-        
+
     } catch (error) {
         // Return an appropriate error message
         console.error('Error occurred while creating post:', error);
@@ -234,9 +242,14 @@ app.post('/api/post', upload.array('files', 5), async (req, res) => {
 });
 
 
+
+
+
+
+
 //게시글 list 조회-  + paging 처리 
 app.get('/api/post', async (req, res) => {
-    console.log('요청 받은 페이지:',req.query.page);
+    //console.log('요청 받은 페이지:',req.query.page);
     const page = parseInt(req.query.page) || 0;
     const limit = parseInt(req.query.limit) || 3;
     //const skip = (page - 1)*limit;
@@ -252,7 +265,7 @@ app.get('/api/post', async (req, res) => {
             totalPages: Math.ceil(totalPosts / limit),
         });
 
-        console.log("posts",posts);
+        //console.log("posts",posts);
 
     } catch(error){
         res.status(500).json({ message: '게시글을 불러오는 중 오류 발생'});
@@ -289,23 +302,196 @@ app.get('/api/post', async (req, res) => {
 
 
 
-//게시물(특정)get /api/post/:id
+//게시물(상세 조회)
 app.get('/api/post/:id', async(req,res) => {
-    console.log("특정 게시물 get 요청 들어옴!!!!!!")
+    //console.log("특정 게시물 get 요청 들어옴!!!!!!")
     const { id } = req.params;
-    console.log("Request params:", req.params);
+    //console.log("Request params:", req.params);
 
     try {
-        const post = await Post.findById(id).populate('userId'); // userId를 참조하는 경우 populate 사용
+        const post = await Post.findById(id)
+            .populate('userId') // userId를 참조하는 경우 populate 사용
+            .populate('comments');
         if (!post) {
             return res.status(404).json({ message: '게시글을 찾을 수 없습니다.' });
         }
+        // console.log("post값- 이미지 주소 잘보기",post);
         res.json(post);
     } catch (error) {
         console.error('게시글을 불러오는 중 오류 발생:', error);
         res.status(500).json({ message: '게시글을 불러오는 중 오류 발생.' });
     }
 });
+
+
+// 게시물 조회수 증가
+app.get('/api/posts/:id/view', async (req, res) => {
+    const { id } = req.params;
+    try {
+        // 조회수 증가
+        const post = await Post.findByIdAndUpdate(id, { $inc: { views: 1 } }, { new: true });
+        if (!post) {
+            return res.status(404).json({ message: '게시글을 찾을 수 없습니다.' });
+        }
+        // 증가된 조회수 반환
+        res.json({ views: post.views });
+    } catch (error) {
+        console.error('조회수 증가 중 오류 발생:', error);
+        res.status(500).json({ message: '서버 오류' });
+    }
+});
+
+
+//좋아요 - 로그인 한 유저만 가능, 유저 당 게시물 한개만 좋아요 가능
+app.post('/api/posts/:id/like', authenticateToken, async (req, res) => {
+    console.log('좋아요 api콜 요청! :', req.params.id);
+    const { id } = req.params;
+    const userId = req.user.id; // post에 쓰인 유저의 정보를 가지고 올 때는 _id이지만 유저 객체 자체의 아이디는 .id로 가지고 옴
+    console.log('Authenticated User ID:', userId); // 인증된 사용자 ID 로그
+
+    try {
+        const post = await Post.findById(id);
+        if (!post) {
+            return res.status(404).json({ message: '게시글을 찾을 수 없습니다.' });
+        }
+
+        if (post.likedBy.includes(userId)) {
+            // 사용자가 이미 좋아요를 눌렀다면, 좋아요 취소
+            post.like -= 1; // 좋아요 수 감소
+            post.likedBy.pull(userId); // 사용자 ID 제거
+        } else {
+            // 사용자가 좋아요를 누르지 않았다면, 좋아요 추가
+            post.like += 1; // 좋아요 수 증가
+            post.likedBy.push(userId); // 사용자 ID 추가
+        }
+
+        await post.save();
+        res.json({ like: post.like });
+    } catch (error) {
+        console.error('좋아요 처리 중 오류 발생:', error);
+        res.status(500).json({ message: '서버 오류' });
+    }
+});
+
+
+
+
+//게시글 수정
+app.put('/api/post/:id', upload.array('files', 5), async (req, res) => {
+    const { id } = req.params;
+    const { title, content } = req.body;
+    const files = req.files ? req.files.map(file => `/uploads/${file.filename}`) : [];
+
+  try {
+        const updatedData = { title, content, files, updatedAt: new Date() };
+        const updatedPost = await Post.findByIdAndUpdate(
+            id,
+            { $set: updatedData }, 
+            { new: true }
+        );
+
+        if (!updatedPost) return res.status(404).json({ message: '게시글을 찾을 수 없음.' });
+        res.json(updatedPost);
+    } catch (error) {
+        console.error('게시글 수정 중 오류 발생:', error); 
+        res.status(500).json({ message: '게시글 수정 중 오류 발생.' });
+    }
+});
+
+// 게시글 삭제
+app.delete('/api/post/:id', async (req, res) => {
+    const { id } = req.params;
+    console.log('삭제할 게시글 ID:', req.params.id); // 로그로 확인
+    try {
+        const deletedPost = await Post.findByIdAndDelete(id);
+        if (!deletedPost) return res.status(404).json({ message: '게시글을 찾을 수 없음.' });
+        res.json({ message: '게시글이 삭제되었습니다.' });
+    } catch (error) {
+        res.status(500).json({ message: '게시글 삭제 중 오류 발생.' });
+    }
+});
+
+
+
+//댓글===========================================================================
+// 댓글 작성
+app.post('/api/comment/:postId', async (req, res) => {
+    console.log("comment got called!!!");
+    try {
+        // Authorization 헤더 확인
+        if (!req.headers.authorization) {
+            return res.status(401).json({ error: 'Authorization header is missing' });
+        }
+
+        // JWT 디코드하여 사용자 정보 얻기
+        const token = req.headers.authorization.split(' ')[1];
+        const decoded = jwt.verify(token, jwtSecret);
+        const userId = decoded.id; // JWT 페이로드에서 'id' 가져오기
+
+        // 게시글 ID와 댓글 내용을 받아옴
+        const { content, parentId } = req.body; 
+        const postId = req.params.postId; // URL에서 게시글 ID 가져오기
+
+        // 사용자 정보를 조회하여 프로필 이미지와 닉네임 가져오기
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        const profileImage = user.profileImage; // 최신 프로필 이미지
+        const nickname = user.nickname; // 사용자의 닉네임
+
+        // 댓글 또는 대댓글 생성
+        const newComment = new Comment({
+            content,
+            author: nickname, // 닉네임
+            profileImage, // 프로필 이미지
+            userId, // 댓글 작성자 ID
+            postId, // 게시글 ID
+            createdAt: Date.now(), // 작성일자
+            parentId: parentId || null
+        });
+
+        // 댓글 저장
+        const savedComment = await newComment.save();
+        console.log('Saved Comment:', savedComment);
+
+        // 포스트에 댓글 ID 추가
+        await Post.findByIdAndUpdate(postId, { $push: { comments: savedComment._id } });
+
+        //댓글 수 증가 
+        await Post.findByIdAndUpdate(postId, { $inc: { commentCount: 1 } });
+
+        res.status(201).json(savedComment);
+
+    } catch (error) {
+        // 에러 메시지 반환
+        console.error('Error occurred while creating comment:', error);
+        res.status(500).json({ error: 'Failed to create comment' });
+    }
+});
+
+
+//작성된 댓글을 받아오는 api 
+app.get('/api/comments/:postId', async (req, res) => {
+    const { postId } = req.params;
+
+    try {
+        const comments = await Comment.find({ postId, parentId: null });
+        const replies = await Comment.find({ postId, parentId: { $ne: null} });
+
+        //부모 댓글에 대댓글 추가 
+        const commentsWithReplies = comments.map(comment => ({
+            ...comment.toObject(),
+            replies: replies.filter(reply => reply.parentId.toString() === comment._id.toString())
+        }));
+        res.status(200).json(commentsWithReplies);
+    } catch (error) {
+        console.error('Error fetching comments:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
 
 
 

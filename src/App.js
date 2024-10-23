@@ -6,6 +6,8 @@ import SignIn from './pages/signIn/SignIn';
 import SignUpFirst from './pages/signUp/SignUpFirst';
 import Write from './pages/board/write/Write';
 import MyPage from './pages/mypage/MyPage';
+import Edit from './pages/edit/Edit';
+import { PageProvider } from '../src/app/PageContext';
 
 
 
@@ -14,18 +16,22 @@ function App() {
 
 
   return (
-    <div className="App"> 
-        <Header />   
-        <Routes>
-          <Route path="/" element={<Main />} />  
-          <Route path="/detail" element={<Detail />} />
-          <Route path="/signIn" element={<SignIn />} />
-          <Route path='/register' element={<SignUpFirst />} />
-          <Route path='/mypage' element={<MyPage />} />
-          <Route path='/write' element={<Write />} />
-          <Route path='/detail/:id' element={<Detail />} />
-        </Routes>
-    </div>
+    <PageProvider>
+      <div className="App"> 
+          <Header />   
+          <Routes>
+            <Route path="/" element={<Main />} />  
+            <Route path="/detail" element={<Detail />} />
+            <Route path="/signIn" element={<SignIn />} />
+            <Route path='/register' element={<SignUpFirst />} />
+            <Route path='/mypage' element={<MyPage />} />
+            <Route path='/write' element={<Write />} />
+            <Route path='/edit/:id' element={<Edit />} />
+            <Route path='/detail/:id' element={<Detail />} />
+          </Routes>
+      </div>
+    </PageProvider>
+
   );
 }
 

@@ -4,7 +4,7 @@
     src: url(https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Regular.eot?#iefix) format("embedded-opentype"), url(https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Regular.woff2) format("woff2"), url(https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Regular.woff) format("woff"), url(https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Regular.ttf) format("truetype");
 }
 
-.Write{
+.Edit{
     width: 70vw;
     height: 100vh;
     /* border: 1px solid black; */
@@ -16,13 +16,29 @@
     margin-bottom: 20px;
 }
 
-.write-title{
+.Edit-title{
     height: 8%;
     padding-left: 10px;
     margin-bottom: 35px;
 }
 
-.write-file{
+.Edit-title-input{
+    font-weight: bold;
+    position: relative;
+    top: 16px;
+}
+
+.Edit-title-inputbox{
+    font-size: 40px;
+    width: 67vw;
+    border: none;
+    /* border-bottom: solid #aaaaaa 1px; */
+    font-family: 'MaruBuri';
+    outline: none;
+}
+
+
+.Edit-file{
     position: relative;
     top: 22px;
     left: 74%;
@@ -34,7 +50,7 @@
     height: 30px;
     background: #fff;
     border: 1px solid rgb(77,77,77);
-    border-radius: 10px;
+    /* border-radius: 10px; */
     cursor: pointer;
 }
 
@@ -43,22 +59,9 @@ input[type="file"]:hover::file-selector-button {
     color: #fff;
 }
 
-.write-title-input{
-    font-weight: bold;
-    position: relative;
-    top: 16px;
-}
 
-.write-title-inputbox{
-    font-size: 40px;
-    width: 67vw;
-    border: none;
-    /* border-bottom: solid #aaaaaa 1px; */
-    font-family: 'MaruBuri';
-    outline: none;
-}
 
-.write-detail-container1{
+.Edit-detail-container1{
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -70,27 +73,40 @@ input[type="file"]:hover::file-selector-button {
     
 }
 
-.w-detail-author-profile, .w-detail-author-id{
+.Edit-detail-author-profile, .Edit-detail-author-id, .Edit-detail-author-date{
     margin-right: 5px;
 }
 
-.write-detail-author-info{
+.Edit-detail-author-info{
     /* border: 1px solid black; */
     
     display: flex;
     align-items: center;
 }
 
-.w-detail-author-profile{
+.Edit-detail-author-profile{
     width: 50px;
     height: 50px;
-    
-    
 }
 
-.w-profileImg{
+.edit-img{
+    display: flex;
+    margin-left: 100px;
+    /* background-color: tomato; */
+}
+
+.custom-quill .ql-editor img {
+    max-width: 250px !important; /* 이미지 최대 너비 250px */
+    height: auto !important; /* 비율 유지 */
+}
+
+/* img{
     width: 100%;
     height: 100%;
+   
+} */
+
+.edit-profile-img{
     border-radius: 100%;
 }
 
@@ -102,32 +118,24 @@ input[type="file"]:hover::file-selector-button {
 }
 
 
-.detail-container2{
-    width: 70vw;
-    height: 80vh;
-    /* border: 1px solid tomato;     */
-}
-
-
-.write-content{
+.Edit-content{
+    background-color: beige;
+    height: 400px;
     font-family: 'MaruBuri';
     width: 100%;
-    height: 64vh;
     border: none;
     resize: none;
     font-size: 16px;
-    background-color: beige;
     position: relative;
     top: 40px;
 }
 
-.write-submit-btn{
+
+.Edit-submit-btn{
+    margin-top: 20px;
     position: absolute;
-    right: 8px;
-    bottom: -140px;
+    right: 15px;
+    bottom: -150px;
 }
 
-.w-detail-author-date{
-    margin-left: 43px;
-    padding-top: 10px;
-}
+

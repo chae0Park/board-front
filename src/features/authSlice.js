@@ -71,7 +71,10 @@ export const fetchUserProfile = (userId) => async (dispatch, getState) => {
         };
 
         const response = await axios.get(`http://localhost:5000/api/users/${userId}`, config);
+        // const user = response.data.user; // 사용자 정보를 받아옴
+        // dispatch(setUserProfile(user)); // 사용자 정보를 상태에 저장
         dispatch(setUserProfile(response.data.user)); // 사용자 정보를 상태에 저장
+        //console.log('현재 사용자 정보- profileImage확인해보기:', user);
     } catch (error) {
         console.error('Error fetching user profile:', error);
         throw error;

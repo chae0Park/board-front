@@ -1,0 +1,21 @@
+
+.Reply{
+    /* border: 1px solid gray; */
+    font-size: 13px;
+    padding-top: 20px;
+}
+
+.reply-top{
+    display: flex;
+}
+
+.reply-author-profileImg{
+    width: 30px;
+    height: 30px;
+
+}
+
+.reply-author-profileImg{
+    border-radius: 100%;
+    border: 1px solid gray;
+}

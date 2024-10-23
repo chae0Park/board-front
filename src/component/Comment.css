@@ -1,0 +1,21 @@
+
+.Comment{
+    /* border: 1px solid gray; */
+    font-size: 13px;
+    padding-top: 20px;
+}
+
+.comment-top{
+    display: flex;
+}
+
+.comment-author-profileImg{
+    width: 30px;
+    height: 30px;
+
+}
+
+.comment-author-profileImg{
+    border-radius: 100%;
+    border: 1px solid gray;
+}

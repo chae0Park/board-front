@@ -5,7 +5,7 @@ import axios from 'axios';
 const initialState = {
     posts: [],
     status: 'idle',
-    currentPost: null, // 여기에 currentPost 추가
+    currentPost: null, 
     totalPosts: 0,
     error: null,
 };
@@ -20,11 +20,39 @@ export const fetchPosts = createAsyncThunk('posts/fetchPosts', async ({ page, po
 
 
 
-//게시글 상세 가져오기
+
+//게시글 상세 가져오기 + 조회수 증가 요청 
 export const fetchPostById = createAsyncThunk('posts/fetchPostById', async (id) => {
     console.log("Fetching Post with ID:", id); 
-    const response = await axios.get(`http://localhost:5000/api/post/${id}`);
-    return response.data;
+    try{
+        await axios.get(`http://localhost:5000/api/posts/${id}/view`);
+        //게시물 정보 가지고 오기 
+        const response = await axios.get(`http://localhost:5000/api/post/${id}`);
+        return response.data;
+    }catch(error){
+        console.error('게시물 가져오기 오류:', error);
+        throw error; // 에러 발생 시 throw
+    }
+        
+});
+
+
+
+export const likePost = createAsyncThunk('posts/likePost', async (id, { getState }) => {
+    const { token } = getState().auth; // 현재 상태에서 토큰 가져오기
+    const config = {
+        headers: {
+            Authorization: `Bearer ${token}`, // 인증 토큰을 헤더에 포함
+        },
+    };
+
+    try {
+        const response = await axios.post(`http://localhost:5000/api/posts/${id}/like`, {}, config); // 빈 객체를 body로 전송
+        return response.data; // 좋아요 수 반환
+    } catch (error) {
+        console.error('좋아요 수 증가 중 오류 발생:', error);
+        throw error; // 에러 발생 시 throw
+    }
 });
 
 
@@ -48,6 +76,7 @@ export const addPost = createAsyncThunk('posts/addPost', async (formData) => {
 
 // 게시글 수정
 export const updatePost = createAsyncThunk('posts/updatePost', async ({ id, formData }, thunkAPI) => {
+    console.log('updatePost 호출, post id:', id); // 값 확인
     try {
         const response = await axios.put(`http://localhost:5000/api/post/${id}`, formData, {
             headers: {
@@ -94,6 +123,13 @@ const postsSlice = createSlice({
             .addCase(fetchPostById.fulfilled, (state, action) => {
                 state.currentPost = action.payload;
                 console.log();
+            })
+            //like reducer
+            .addCase(likePost.fulfilled, (state, action) => {
+                const updatedPost = state.posts.find(post => post.id === action.meta.arg);
+                if (updatedPost) {
+                    updatedPost.like = action.payload.like; // 서버에서 반환된 좋아요 수로 업데이트
+                }
             })
             .addCase(addPost.fulfilled, (state, action) => {
                 state.posts.push(action.payload);

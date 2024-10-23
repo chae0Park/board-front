@@ -1,5 +1,6 @@
 import './Footer.css';
 import { Link } from 'react-router-dom';
+import instagram from '../../../assets/image/instagram_logo.png';
 
 const Footer = () => {
     return(
@@ -15,7 +16,7 @@ const Footer = () => {
 
             <div className='Footer-right'>
                 <div className='Footer-email'>email@email.com</div>
-                <div className='Footer-instagram'><img src='https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Instagram_icon.png/480px-Instagram_icon.png' alt='instagram'/></div>
+                <div className='Footer-instagram'><img src={instagram} alt='instagram'/></div>
                 <div className='Footer-github'><img src='https://cdn-icons-png.flaticon.com/512/25/25231.png' alt='github'/></div>
             </div>
         </div>

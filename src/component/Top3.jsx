@@ -6,7 +6,7 @@ const Top3 = () => {
         <div className='Top3'>         
             <div className='detail'>
                 <div className='Top3-top'>
-                    <div className='Top3-img'><img src='https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500' alt='profile' /></div>
+                    <div className='Top3-img-container'><img className='Top3-img' src='https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500' alt='profile' /></div>
                     <div className='Top3-user-info'> 
                         <div className='id'>profile 1</div>
                         <div className='date'>2024-07-17</div>

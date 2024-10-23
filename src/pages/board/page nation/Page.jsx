@@ -1,12 +1,15 @@
 import { useState } from 'react';
 import './Page.css';
+import { usePageContext } from '../../../app/PageContext';
 
-const Page = ({ totalPosts, postsPerPage, paginate }) => {
+const Page = ({ totalPosts }) => {
     const [currentPageSet, setCurrentPageSet] = useState(0);
+    const postsPerPage = 3;
     const totalPages = Math.ceil((totalPosts / postsPerPage)-1); // 전체 페이지수 :totalPages
     const pagesPerSet = 5; // 0~ 몇 개 까지를 최대로 보여줄지 정함 : pagesPerSet
     const startPage = currentPageSet * pagesPerSet;
     const endPage = Math.min(startPage + pagesPerSet - 1, totalPages);
+    const { paginate } = usePageContext(); // Context에서 값 가져오기
 
     const pageNumbers = [];
     for (let i = startPage; i <= endPage; i++) {
@@ -24,7 +27,7 @@ const Page = ({ totalPosts, postsPerPage, paginate }) => {
         <div className='Page-container'>
             {currentPageSet > 0 && (
                 <div className='prev-page' onClick={() => setCurrentPageSet(currentPageSet - 1)}>
-                    &lt; 이전
+                    &lt; 
                 </div>
             )}
             {pageNumbers.map((number) => (
@@ -34,7 +37,7 @@ const Page = ({ totalPosts, postsPerPage, paginate }) => {
             ))}
             {endPage < totalPages && (
                 <div className='next-page' onClick={() => setCurrentPageSet(currentPageSet + 1)}>
-                    다음 &gt;
+                     &gt;
                 </div>
             )}
         </div>

@@ -39,7 +39,7 @@ const MyPage = () => {
             <h1>My Page</h1>
             <h2>Welcome, {user.nickname}!</h2>
             <div>
-                <img src={user.profileImage || default_user } alt="Profile" style={{ width: '100px', height: '100px' }} />
+                <img src={user.profileImage || default_user } alt="Profile" style={{ width: '100px', height: '100px', borderRadius: '100%'  }} />
             </div>
             <p>{user.id}</p>
             <p>user name: {user.nickname}</p>

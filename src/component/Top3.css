@@ -6,7 +6,7 @@
 img{
     width: 100%;
     height: 100%;
-    border-radius: 100%;
+    /* border-radius: 100%; */
 }
 .Top3 {
     width: 300px;
@@ -37,14 +37,16 @@ img{
     margin-bottom: 10px;
 }
 
-.Top3-img{
-    
-    border-radius: 100%;
+.Top3-img-container{  
     height: 40px;
     width: 40px;
     border: none;
     margin-right: 10px;
 
+}
+
+.Top3-img{
+    border-radius: 100%;
 }
 
 .Top3-user-info{

@@ -6,7 +6,6 @@
 .Detail{
     width: 70vw;
     height: 110vh;
-    /* border: 1px solid black; */
 
     position: relative;
     left: 14%;
@@ -61,7 +60,7 @@
     
 }
 
-img{
+.detail-profileImg{
     width: 100%;
     height: 100%;
     border-radius: 100%;
@@ -78,22 +77,51 @@ img{
 .detail-container2{
     width: 70vw;
     height: 80vh;
-    /* border: 1px solid tomato;     */
 }
 .detail-content{
-    background-color: beige;
-    height: 80%;
-}
-
-.detail-content{
-    font-size: 18px;
+    /* height: 80%; */
+    font-size: 17px;
+    margin-bottom: 30px;
 }
 
 .detail-like-comment{
     display: flex;
     font-size: 15px;
     margin-top: 10px;
-
+    margin-bottom: 20px;
 }
 
+
+.edit_btn, .delete_btn{
+    border: 0;
+    background-color: transparent;
+}
+
+.edit_btn, .delete_btn :hover{
+    cursor: pointer;
+}
+
+
+.commentInput{
+    width: 50%;
+    height: 20px;
+    border: none;
+    border-bottom: solid #6e7383 2px;
+    margin: 10px 0 10px;
+}
+
+.replyInputbox{
+    border: none;
+    border-bottom: solid #6e7383 1px;
+}
+/* 인풋박스 클릭 - 효과 없음  */
+.commentInput:focus{
+    outline: none;
+}
+
+.reply-input, .reply_to_comment{
+    position: relative;
+    left: 20px;
+    
+}
 

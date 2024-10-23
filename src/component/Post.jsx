@@ -6,18 +6,35 @@ const Post = ({ post }) => {
     if (!post) {
         return null; // 게시글이 없는 경우 null 반환
     }
+    const commentCount = post.comments.length;
     const id = post._id;
-    console.log("profilepic:",post.profileImage);
-    const previewText = post.content.length > 70 
-        ? post.content.slice(0, 70) + '...' // 글자 수가 초과할 경우 '...' 추가
-        : post.content;
+    // 이미지 태그를 제외한 텍스트만을 추출
+    const getPreviewText = (content) => {
+        // 이미지 태그를 정규 표현식으로 제거
+        const textOnly = content.replace(/<img[^>]*>/g, ''); // 이미지 태그 제거
+    
+        // HTML 태그를 제거하여 순수 텍스트만 남김
+        const tempElement = document.createElement('div');
+        tempElement.innerHTML = textOnly;
+        const plainText = tempElement.textContent || tempElement.innerText || '';
+    
+        // 70자 이내로 자르고 '...' 추가
+        return plainText.length > 70 ? plainText.slice(0, 70) + '...' : plainText;
+    };
+    
+    // 사용 예시
+    const previewText = getPreviewText(post.content);
+    
+    
+
+
     return (
         <div className="Post-container">
         <div className='Post'>   
        
             <div className='Post-content'>         
                     <div className='Post-top'>
-                        <div className='Post-img'><img src={post.profileImage} alt={post.author} /></div>
+                        <div className='Post-img'><img className='Post-profile-img' src={post.profileImage} alt={post.author} /></div>
                         <div className='Post-user-info'> 
                             <div className='Post-id'>{post.author}</div>
                             {/* 일/월/년 순으로  */}
@@ -39,22 +56,18 @@ const Post = ({ post }) => {
                                 {post.title}
                             </Link>
                         </div> 
-                        <div className='Post-mid-content'>{previewText}</div>
+                        <div className='Post-mid-content'>
+                            {/* 마크다운이나 HTML을 처리할 수 있는 방법을 통해 변환된 내용을 렌더링 */}
+                            <span dangerouslySetInnerHTML={{ __html: previewText }} />
+                        </div>
                     </div>
 
                     <div className='Post-btm'>
-                        <div>댓글 0 ·</div>
-                        <div>좋아요 0 ·</div>
-                        <div>조회수 0</div>    
+                        <div>댓글{commentCount}</div>
+                        <div>좋아요 {post.like} ·</div>
+                        <div>조회수 {post.views}</div>    
                     </div>
             </div> 
-          
-            
-
-                    {/* 만약 게시물에 이미지가 있으면 미리보이도록 하기 
-                    이미지 컨테이너를 미리 넣어준다 
-                    */}
-            {/* <div className='post-content-img'><img className='post-content-img-src' src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShmrYrkdowb1COVNhgCF8id6juxqoU14v9AQ&s' alt='gelato'/></div> */}
         </div>
     </div>
     );
