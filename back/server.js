@@ -302,16 +302,37 @@ app.get('/api/post', async (req, res) => {
 
 
 
-//게시물(상세 조회)
-app.get('/api/post/:id', async(req,res) => {
-    //console.log("특정 게시물 get 요청 들어옴!!!!!!")
-    const { id } = req.params;
-    //console.log("Request params:", req.params);
+//게시물(상세 조회) - 상세 게시물 렌더링 최적화 전 
+// app.get('/api/post/:id', async(req,res) => {
+//     const { id } = req.params;
+//     try {
+//         const post = await Post.findById(id)
+//             .populate('userId') // userId를 참조하는 경우 populate 사용
+//             .populate('comments');
+//         if (!post) {
+//             return res.status(404).json({ message: '게시글을 찾을 수 없습니다.' });
+//         }
+//         // console.log("post값- 이미지 주소 잘보기",post);
+//         res.json(post);
+//     } catch (error) {
+//         console.error('게시글을 불러오는 중 오류 발생:', error);
+//         res.status(500).json({ message: '게시글을 불러오는 중 오류 발생.' });
+//     }
+// });
 
+// 상세 게시물 불러오기 렌더링 최적화 후 
+app.get('/api/post/:id', async(req,res) => {
+    const { id } = req.params;
     try {
         const post = await Post.findById(id)
-            .populate('userId') // userId를 참조하는 경우 populate 사용
-            .populate('comments');
+            .populate({
+                path: 'comments',
+                populate: {
+                    path: 'userId', // 댓글의 작성자 정보도 함께 가져옴
+                    select: 'profileImage nickname' // 필요한 필드만 선택
+                }
+            })
+            .populate('userId'); // 게시글 작성자 정보
         if (!post) {
             return res.status(404).json({ message: '게시글을 찾을 수 없습니다.' });
         }

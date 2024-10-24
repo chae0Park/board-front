@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react';
 import Comment from '../../../component/Comment';
 import Reply from '../../../component/Reply';
 import { addComment,fetchComments  } from '../../../features/commentSlice';
+import { fetchUserProfile } from '../../../features/authSlice';
 
 
 
