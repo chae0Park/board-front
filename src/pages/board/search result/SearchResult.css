@@ -1,3 +1,10 @@
-.screen-setter{
-    display: flex;
+.SearchResult-contents{
+    position: relative;
+    left: 180px;
+}
+
+.SearchResult-desc{
+    position: relative;
+    left: 70px;
+    bottom: 20px;
 }

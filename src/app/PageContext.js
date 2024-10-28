@@ -1,9 +1,9 @@
 import React, { createContext, useContext, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-const PageContext = createContext();
+const PageContext = createContext(); //createContext 함수를 사용하여 새로운 Context를 생성
 
-export const PageProvider = ({ children }) => {
+export const PageProvider = ({ children }) => { //해당 컴포넌트가 감싸고 있는 모든 자식 요소를 나타내는 특수한 prop
     const location = useLocation();
     const navigate = useNavigate();
     const queryParams = new URLSearchParams(location.search);

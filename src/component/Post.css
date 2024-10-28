@@ -1,11 +1,4 @@
 
-/*font*/
-@font-face {
-    font-family: 'MaruBuri';
-    src: url(https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Regular.eot?#iefix) format("embedded-opentype"), url(https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Regular.woff2) format("woff2"), url(https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Regular.woff) format("woff"), url(https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Regular.ttf) format("truetype");
-}
-
-
 /*작업크기 설정*/
 .Post-container{
     width: 48vw;
@@ -14,10 +7,8 @@
     border-radius: 10px;
     
     margin-left: 50px;
-    /*최신게시물에서 사용할 때 마다 아래가 붙지않도록*/
-    margin-bottom: 20px;
 
-    font-family: 'MaruBuri';
+    margin-bottom: 20px;
 }
 
 .Post-content{

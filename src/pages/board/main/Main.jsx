@@ -21,7 +21,7 @@ const Main = () => {
     const postStatus = useSelector((state) => state.posts.status); 
     const totalPosts = useSelector((state) => state.posts.totalPosts);
 
-    //기존의 앱 실행 후 현재 페이지에 맞는 data 가져오는 식 
+    //처음 앱 실행 후 현재 페이지에 맞는 data 가져오는 식 
     useEffect(() => {
         if (postStatus === 'idle' || postStatus === 'failed') {
             console.log('fetchPosts 호출됨 currentPage, postsPerPage :', { currentPage, postsPerPage });
@@ -29,6 +29,7 @@ const Main = () => {
         }
     }, [currentPage, dispatch, postStatus]);
 
+    //세로운 페이지 번호를 눌렀을 때, 해당 페이지 번호에 맞는 데이터를 가지고옴.
     useEffect(() => {
         if (initialPage !== currentPage) {
             setCurrentPage(initialPage); // currentPage 업데이트

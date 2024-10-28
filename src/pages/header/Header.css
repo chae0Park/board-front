@@ -1,10 +1,5 @@
-@font-face {
-    font-family: 'MaruBuri';
-    src: url(https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Regular.eot?#iefix) format("embedded-opentype"), url(https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Regular.woff2) format("woff2"), url(https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Regular.woff) format("woff"), url(https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Regular.ttf) format("truetype");
-}
 
 .left-title, .login-btn, .header-writing {
-    font-family: 'MaruBuri';
     font-weight: bold;
 }
 
@@ -59,6 +54,7 @@ img {
     color: #fff;
     box-shadow: 0 0 40px 40px black inset, 0 0 0 0 black;
     transition: all 200ms ease-in-out;
+    font-family: 'MaruBuri';
     
     &:hover {
       box-shadow: 0 0 10px 0 black inset, 0 0 10px 4px black;

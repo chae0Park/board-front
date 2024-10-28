@@ -3,13 +3,20 @@ import search from '../../assets/image/search-icon.png';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { logoutUser } from '../../features/authSlice';
+import { useState } from 'react';
+import { fetchSearchedPosts } from '../../features/postSlice';
 
 
 
 const Header = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    
+    //서치바
+    const [clickSearchIcon, setClickSearchIcon] = useState(false);
+    const [searchValue, setSearchValue] = useState('');
+    const [searchOption, setSearchOption] = useState('all');
+
+
     //get the logging user from Redux
     const user = useSelector((state) => state.auth.user);
 
@@ -22,6 +29,25 @@ const Header = () => {
         onNavigate(); //redirect to the login page after logout
     };
 
+    //search bar 돋보기 누르면 서치바 나옴 
+    const handleSearchBar = () => {
+        setClickSearchIcon((click) => !click);
+    }
+
+    const handleSearchOptionChange = (event) => {
+        setSearchOption(event.target.value);
+    };
+
+    const handleSearchValueChange = (event) => {
+        setSearchValue(event.target.value);
+    };
+    //검색버튼을 누르면 fetchSearchedPosts호출 
+    const handleSearch = () => {
+        dispatch(fetchSearchedPosts({ searchTerm: searchValue, searchOption }));
+        navigate("/search");
+    };
+    
+
     return(       
         <div className="Header">
 
@@ -31,7 +57,30 @@ const Header = () => {
             </div>
             
             <div className="header-container2">
-                <div className="search-icon"><img src={search} alt='search-icon'/></div>
+                {clickSearchIcon && (
+                    <div>
+                        <select value={searchOption} onChange={handleSearchOptionChange}>
+                            <option value="all">전체</option>
+                            <option value="title">제목</option>
+                            <option value="content">내용</option>
+                            <option value="author">작성자명</option>
+                        </select>
+                        <input 
+                            type='text' 
+                            placeholder='검색어 입력' 
+                            value={searchValue} 
+                            onChange={handleSearchValueChange} 
+                        />
+                        <button 
+                        type='button' 
+                        onClick={handleSearch} 
+                        style={{cursor:'pointer'}}
+                        >검색</button>
+                    </div>
+                )}
+                <div className="search-icon" onClick={handleSearchBar} style={{cursor:'pointer'}}><img src={search} alt='search-icon'/></div>
+                
+                
                 {user ? (
                     <>
                         <Link to={'/'} 

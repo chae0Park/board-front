@@ -243,10 +243,6 @@ app.post('/api/post', upload.array('files', 5), async (req, res) => {
 
 
 
-
-
-
-
 //게시글 list 조회-  + paging 처리 
 app.get('/api/post', async (req, res) => {
     //console.log('요청 받은 페이지:',req.query.page);
@@ -271,6 +267,39 @@ app.get('/api/post', async (req, res) => {
         res.status(500).json({ message: '게시글을 불러오는 중 오류 발생'});
     }
 });
+
+//필터링 작업이 더해진 게시물 조회
+app.get('/api/posts/search', async (req, res) => {
+    console.log('포스트 서치 api 호출❤️');
+    const { query, option, userId, date } = req.query; //3개 중 하나만 있어도 api가 정상작동함 express.js덕분
+    const filters = {};
+    console.log('클라이언트에서 받은값', {query, option, userId, date});
+    if (query) {
+        const regexFilter = { $regex: query, $options: 'i' }; 
+
+        if (option === 'all') {
+            filters.$or = [
+                { content: regexFilter },
+                { author: regexFilter }
+            ];
+        } else {
+            filters[option] = regexFilter;
+        }
+    }
+
+    if (userId) {
+        filters.userId = userId;
+    }
+
+    if (date) {
+        filters.date = { $gte: new Date(date) };
+    }
+
+    const posts = await Post.find(filters);
+    console.log('포스트서치 api에서 돌려주는',posts,query)
+    res.json({posts,query});
+});
+
 
 // skip() 때문에 버그 걸릴 때 
 // app.get('/api/post', async (req, res) => {
@@ -302,23 +331,7 @@ app.get('/api/post', async (req, res) => {
 
 
 
-//게시물(상세 조회) - 상세 게시물 렌더링 최적화 전 
-// app.get('/api/post/:id', async(req,res) => {
-//     const { id } = req.params;
-//     try {
-//         const post = await Post.findById(id)
-//             .populate('userId') // userId를 참조하는 경우 populate 사용
-//             .populate('comments');
-//         if (!post) {
-//             return res.status(404).json({ message: '게시글을 찾을 수 없습니다.' });
-//         }
-//         // console.log("post값- 이미지 주소 잘보기",post);
-//         res.json(post);
-//     } catch (error) {
-//         console.error('게시글을 불러오는 중 오류 발생:', error);
-//         res.status(500).json({ message: '게시글을 불러오는 중 오류 발생.' });
-//     }
-// });
+
 
 // 상세 게시물 불러오기 렌더링 최적화 후 
 app.get('/api/post/:id', async(req,res) => {

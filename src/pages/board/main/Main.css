@@ -1,14 +1,3 @@
-@font-face {
-    font-family: 'MaruBuri';
-    src: url(https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Regular.eot?#iefix) format("embedded-opentype"), url(https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Regular.woff2) format("woff2"), url(https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Regular.woff) format("woff"), url(https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Regular.ttf) format("truetype");
-}
-
-/* @font-face {
-    font-family: 'Pretendard';
-    src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
-    font-weight: 400;
-    font-style: normal;
-} */
 
 .Main{
     /*헤더에서 부터 작업공간 떨어뜨리기*/
@@ -17,7 +6,7 @@
 
     /* background-color: beige; */
     height: 90vh;
-    /* font-family: 'Pretendard'; */
+ 
     
 }
 
@@ -36,12 +25,11 @@
 .Main-title{
     width: 50%;
     height: 35%;
-    /* border: 1px solid tomato; */
+
 }
 
 .Main-title-writing{
     font-size:40px ;
-    font-family: 'MaruBuri';
     font-weight: bold;
 }
 
@@ -51,7 +39,6 @@
     padding-top: 20px;
     padding-bottom: 20px;
     font-size: 20px;
-    font-family: 'MaruBuri';
     text-align: center;
 }
 
