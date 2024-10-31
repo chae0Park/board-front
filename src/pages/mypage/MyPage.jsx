@@ -12,7 +12,12 @@ const MyPage = () => {
     const [nav, setNav] = useState('post'); // 디폴트를 post로 세팅하고 코멘트 라이크 누를 때 바뀌게
     const fileInputRef = useRef(null);
     const { user } = useSelector(state => state.auth); // Redux 상태에서 사용자 정보 가져오기
-    const { myPosts } = useSelector(state => state.posts);
+    const { myPosts, postsWithComments, likedPosts } = useSelector(state => ({
+        myPosts: state.posts.myPosts,
+        postsWithComments: state.posts.postsWithComments,
+        likedPosts: state.posts.likedPosts,
+    }));
+    
 
 
     // 사용자 정보를 가져오는 액션 호출
@@ -36,13 +41,16 @@ const MyPage = () => {
     };
 
 
-    //처음 앱 실행 후 현재 페이지에 맞는 data 가져오는 식 
+    //nav
+    const handleSelect = (selection) => {
+        setNav(selection);
+        console.log('선택된 nav 키는?',selection);
+    }
+
+    //유저가 작성한 게시글 가지고 오기  - post 
     useEffect(() => {   
         dispatch(fetchMyPosts(user.id));
     }, [dispatch, user.id]);
-
-
-
 
 
 
@@ -68,9 +76,9 @@ const MyPage = () => {
                     {/* <p>{user.id}</p> */}
                 </div>
                 <div className='MyPage-navbar'>
-                    <p>post</p>
-                    <p>comment</p>
-                    <p>like</p>
+                    <p onClick={() => handleSelect('post')}>post</p>
+                    <p onClick={() => handleSelect('comment')}>comment</p>
+                    <p onClick={() => handleSelect('like')}>like</p>
                     <p><Link to={'/write'} style={{textDecoration:'none', color:'black'}}>create post</Link></p>
                 </div>
             </div>
@@ -84,14 +92,30 @@ const MyPage = () => {
             />
             {/*유저가 작성한 게시물 */}
             <div className='user-contents'>
-            {myPosts.length > 0 ? (
+            {nav === 'post' && myPosts.length > 0 && (
                 myPosts.map(post => (
                     <Post key={post._id} post={post} />
                 ))
-            ) : (
-                <p>게시물이 없습니다.</p>
             )}
             </div>     
+
+            {/*유저가 댓글 단 게시물 */}
+            <div className='user-contents'>
+            {nav === 'comment' && postsWithComments.length > 0 && (
+                postsWithComments.map(post => (
+                    <Post key={post._id} post={post} />
+                ))
+            )}
+            </div>   
+
+            {/*유저가 좋아요한 게시물 */}
+            <div className='user-contents'>
+            {nav === 'like' && likedPosts.length > 0 && (
+                likedPosts.map(post => (
+                    <Post key={post._id} post={post} />
+                ))
+            )}
+            </div>   
         </div>
     );
 };

@@ -63,7 +63,7 @@ const Post = ({ post }) => {
                     </div>
 
                     <div className='Post-btm'>
-                        <div>댓글{commentCount}</div>
+                        <div>댓글{commentCount} ·</div>
                         <div>좋아요 {post.like} ·</div>
                         <div>조회수 {post.views}</div>    
                     </div>

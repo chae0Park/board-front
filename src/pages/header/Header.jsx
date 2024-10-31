@@ -23,12 +23,14 @@ const Header = () => {
     const onNavigate = () => {
         navigate("/signin");
     }
-
-    const handleLogout  = () => {
-        dispatch(logoutUser()); // dispatch the logout action
-        onNavigate(); //redirect to the login page after logout
+    //async 가 없으면 로그아웃 처리 안된채로 메인으로 넘어감
+    const handleLogout  = async () => {
+        console.log("로그아웃 요청 중...");
+        await dispatch(logoutUser());
+        console.log("로그아웃 완료, 메인으로 이동 중...");
+        onNavigate(); 
     };
-
+    
     //search bar 돋보기 누르면 서치바 나옴 
     const handleSearchBar = () => {
         setClickSearchIcon((click) => !click);
@@ -41,10 +43,15 @@ const Header = () => {
     const handleSearchValueChange = (event) => {
         setSearchValue(event.target.value);
     };
+
+    
     //검색버튼을 누르면 fetchSearchedPosts호출 
     const handleSearch = () => {
+        console.log("searchValue",searchValue);
         dispatch(fetchSearchedPosts({ searchTerm: searchValue, searchOption }));
         navigate("/search");
+        setSearchValue('');
+        setClickSearchIcon(false);
     };
     
 

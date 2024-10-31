@@ -11,6 +11,7 @@ const mongoose = require('mongoose');
 const User = require('./model/User'); // User 모델 임포트
 const Post = require('./model/Post'); // Post 모델 임포트 
 const Comment = require('./model/Comment');// Comment 모델 임포트
+const SearchFrequency = require('./model/SearchFrequency');
 const upload = require('./middleware/upload');
 //const { SourceTextModule } = require('vm');
 const { v4: uuidv4 } = require('uuid');
@@ -188,8 +189,10 @@ app.put('/api/users/:id', authenticateToken, upload.single('profileImage'), asyn
 
 // Protected Route for Logout (or other secured actions)
 app.post('/api/logout', authenticateToken, (req, res) => {
+    console.log("로그아웃 성공적으로 호출");
     // Clear token logic could be handled on client side.
     res.status(200).json({ message: 'Logged out successfully' });
+    
 });
 
 
@@ -241,7 +244,15 @@ app.post('/api/post', upload.array('files', 5), async (req, res) => {
     }
 });
 
-
+//전체 posts데이터 불러오기 
+app.get('/api/posts/all', async (req, res) => {
+    try {
+        const posts = await Post.find(); // 모든 게시글 조회
+        res.json(posts); // 모든 게시글을 반환
+    } catch (error) {
+        res.status(500).json({ message: '게시글을 불러오는 중 오류 발생' });
+    }
+});
 
 //게시글 list 조회-  + paging 처리 
 app.get('/api/post', async (req, res) => {
@@ -252,7 +263,7 @@ app.get('/api/post', async (req, res) => {
     const skip = page * limit;
 
     try{
-        const posts = await Post.find().skip(skip).limit(limit);
+        const posts = await Post.find().sort({ createdAt: -1 }).skip(skip).limit(limit);
         const totalPosts = await Post.countDocuments();
 
         res.json({
@@ -268,38 +279,79 @@ app.get('/api/post', async (req, res) => {
     }
 });
 
+
 //필터링 작업이 더해진 게시물 조회
 app.get('/api/posts/search', async (req, res) => {
     console.log('포스트 서치 api 호출❤️');
-    const { query, option, userId, date } = req.query; //3개 중 하나만 있어도 api가 정상작동함 express.js덕분
-    const filters = {};
+    try{const { query, option, userId, date } = req.query; 
+        const filters = {};
     console.log('클라이언트에서 받은값', {query, option, userId, date});
-    if (query) {
-        const regexFilter = { $regex: query, $options: 'i' }; 
 
-        if (option === 'all') {
-            filters.$or = [
-                { content: regexFilter },
-                { author: regexFilter }
-            ];
-        } else {
-            filters[option] = regexFilter;
+        if (query) {
+            //검색어의 빈도수 증가
+            const freq = await SearchFrequency.findOne({ term: query });
+            if(freq){
+                freq.count++
+                await freq.save();
+            }else{
+                const newFreq = new SearchFrequency({term: query, count: 1});
+                await newFreq.save();
+            }
+
+            const regexFilter = { $regex: query, $options: 'i' }; 
+
+            if (option === 'all') {
+                filters.$or = [
+                    { title: regexFilter },
+                    { content: regexFilter },
+                    { author: regexFilter }
+                ];
+            } else {
+                filters[option] = regexFilter;
+            }
         }
-    }
 
-    if (userId) {
-        filters.userId = userId;
-    }
+        if (userId) {
+            filters.userId = userId;
+        }
 
-    if (date) {
-        filters.date = { $gte: new Date(date) };
-    }
+        //댓글이 달린 게시물 가져오기 
+        const comments = userId ? await Comment.find({ userId }) : [];
+        const commentedPostIds = comments.map(comment => comment.postId); // 코맨트가 가지고 있는 포스트 아이디 들을 추출해냄
+        const postsWithComments = await Post.find({ _id: {$in: commentedPostIds } }); 
 
-    const posts = await Post.find(filters);
-    console.log('포스트서치 api에서 돌려주는',posts,query)
-    res.json({posts,query});
+        //좋아요를 누른 게시물가져오기 
+        const likedPosts = userId ? await Post.find({ likedBy : userId }) : [];
+        
+
+        if (date) {
+            filters.date = { $gte: new Date(date) };
+        }
+        //필터에 따른 게시물 가져오기 
+        const posts = await Post.find(filters);
+        
+        console.log('query값:', query);
+        res.json({posts, query, postsWithComments, likedPosts});
+        
+    } catch (error) {
+        res.status(500).json({ message: 'Interna server error' });
+    }
+    
 });
 
+//인기검색어
+app.get('/api/search-frequencies', async (req, res) => {
+    try {
+//count기준으로 내림차 순 정렬하고 9개만 가지고 오면서 term만 선택
+        const frequencies = await SearchFrequency.find({}, {term: 1, _id: 1 })
+		.sort({ count: -1 })
+		.limit(9);
+        res.json(frequencies);
+    } catch (error) {
+        console.error('Error fetching search frequencies:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
 
 // skip() 때문에 버그 걸릴 때 
 // app.get('/api/post', async (req, res) => {
@@ -349,7 +401,7 @@ app.get('/api/post/:id', async(req,res) => {
         if (!post) {
             return res.status(404).json({ message: '게시글을 찾을 수 없습니다.' });
         }
-        // console.log("post값- 이미지 주소 잘보기",post);
+        console.log("post값- 이미지 주소 잘보기",post);
         res.json(post);
     } catch (error) {
         console.error('게시글을 불러오는 중 오류 발생:', error);

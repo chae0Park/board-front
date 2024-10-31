@@ -1,9 +1,9 @@
 import './Icon.css';
 
-const Icon = () => {
+const Icon = ({term}) => {
     return(
         <div className='Icon'>
-            <button>저녁메뉴</button>
+            <button>{term}</button>
         </div>
     )
 }

@@ -4,14 +4,27 @@ import axios from 'axios';
 
 const initialState = {
     posts: [],
+    postsAll: [],
+    allPosts: [], // 이 이름이 다르면 타 컴포넌트에서 useSelector()를 이용해서 데이터를 가지고 올 때 allPosts가 배열이 아니라 iriterable하단 에러를 발생시킴
     myPosts: [],
     searchedPosts: [],
     searchTerm: '',  // 추가
+    popularSearchTerms: {}, // 초기값을 객체로 정의
     status: 'idle',
     currentPost: null, 
     totalPosts: 0,
     error: null,
 };
+
+
+//전체 게시글 불러오기 (페이지처리 x)
+export const fetchAllPosts = createAsyncThunk('posts/fetchAllPosts', async () => {
+    console.log('fetchAllPost호출, allPosts는?');
+    const response = await axios.get(`http://localhost:5000/api/posts/all`);
+    console.log(response);
+    return response.data; // 모든 게시글 반환
+});
+
 
 
 //게시글 리스트 + 페이징 처리 
@@ -34,7 +47,7 @@ export const fetchMyPosts = createAsyncThunk(
 // Searched Posts 가져오기
 export const fetchSearchedPosts = createAsyncThunk(
     'posts/fetchSearchedPosts', // 자동으로 타입을 생성합니다
-    async ({searchTerm,searchOption}) => {
+    async ({searchTerm, searchOption}) => {
         console.log('검색 후 fetchSearchedPost가 호출되었습니다',)
         const response = await axios.get(`http://localhost:5000/api/posts/search?query=${searchTerm}&option=${searchOption}`);
         console.log('fetchSearchedPosts  호출 후 응답 값',response)
@@ -143,15 +156,20 @@ const postsSlice = createSlice({
                 state.error = action.error.message;
                 console.error('게시글 가져오기 실패:', action.error.message);  // 실패 상태 로그
             })
+            .addCase(fetchAllPosts.fulfilled, (state, action) => {
+                state.status = 'succeeded';
+                state.allPosts = action.payload; // 모든 게시글 배열로 저장
+            })
             .addCase(fetchMyPosts.fulfilled, (state, action) => {
                 state.loading = false;
-                state.myPosts = action.payload;
+                state.myPosts = action.payload.posts;
+                state.postsWithComments = action.payload.postsWithComments; // 댓글이 달린 게시물 ID
+                state.likedPosts = action.payload.likedPosts; // 좋아요가 눌린 게시물
             })
             .addCase(fetchSearchedPosts.fulfilled, (state, action) => {
                 state.loading = false;
                 state.searchedPosts = action.payload.posts;
                 state.searchTerm = action.payload.query;
-
             })
             // Fetch a single post by ID
             .addCase(fetchPostById.fulfilled, (state, action) => {
@@ -185,5 +203,6 @@ const postsSlice = createSlice({
 
 export const selectSearchedPosts = (state) => state.posts.searchedPosts; // 검색된 포스트
 export const selectSearchTerm = (state) => state.posts.searchTerm;
+
 
 export default postsSlice.reducer;

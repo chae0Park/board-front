@@ -79,11 +79,25 @@ export const fetchUserProfile = (userId) => async (dispatch, getState) => {
 };
 
 
+//로그아웃 액션 생성자 
+export const logoutUser = () => async (dispatch, getState) => {
+    const { token } = getState().auth; // 현재 인증 토큰 가져오기
+    const config = {
+        headers: {
+            'Authorization': `Bearer ${token}`, // 인증 토큰을 헤더에 포함
+        },
+    };
 
-export const logoutUser = () => (dispatch) => {
-    sessionStorage.removeItem('token');
-    dispatch(logoutSuccess());
+    try {
+        await axios.post('http://localhost:5000/api/logout', {}, config); // 빈 객체로 body를 보냄
+        sessionStorage.removeItem('token');
+        dispatch(logoutSuccess());
+    } catch (error) {
+        console.error('로그아웃 API 호출 오류:', error);
+    }
 };
+
+
 
 // 프로필 사진 업로드 액션
 export const uploadProfileImage = (imageFile, userId) => async (dispatch, getState) => {
