@@ -8,17 +8,16 @@ import Write from './pages/board/write/Write';
 import MyPage from './pages/mypage/MyPage';
 import Edit from './pages/edit/Edit';
 import { PageProvider } from '../src/app/PageContext';
+import { LanguageProvider } from './locales/LanguageContext';
 import SearchResult from './pages/board/search result/SearchResult';
-
-
 
 
 function App() {
 
-
   return (
     <PageProvider>
-      <div className="App"> 
+      <LanguageProvider>
+        <div className="App"> 
           <Header />   
           <Routes>
             <Route path="/" element={<Main />} />  
@@ -31,7 +30,8 @@ function App() {
             <Route path='/detail/:id' element={<Detail />} />
             <Route path='/search' element={<SearchResult />} />
           </Routes>
-      </div>
+        </div>
+      </LanguageProvider>
     </PageProvider>
 
   );

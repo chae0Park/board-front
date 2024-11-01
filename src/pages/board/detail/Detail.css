@@ -93,7 +93,7 @@
     background-color: transparent;
 }
 
-.edit_btn, .delete_btn :hover{
+.edit_btn:hover, .delete_btn:hover{
     cursor: pointer;
 }
 

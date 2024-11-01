@@ -10,6 +10,7 @@ import { usePageContext } from '../../../app/PageContext';
 import Modal from '../../../component/Modal';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css'; // 스타일 import
+import { useTranslation } from 'react-i18next';
 
 
 const Write = () => {
@@ -30,6 +31,9 @@ const Write = () => {
     const today = new Date();
     const formattedDate = `${today.getDate()}.${today.getMonth()+1}.${today.getFullYear()}`
 
+    //다국어 처리 
+    const { t } = useTranslation();
+
     //로그인한 유저의 정보를 가져온다 
     useEffect(() => {
         if (user) {
@@ -44,7 +48,7 @@ const Write = () => {
     
     //로그인 상태가 아니여서 user가 없을 때 
     if (!user) {
-        return <div>{modalOpen && (<Modal  message={'글을 작성하려면 로그인이 필요합니다.'} onClose={handleCloseModal} />)}</div>
+        return <div>{modalOpen && (<Modal  message={t('please login')} onClose={handleCloseModal} />)}</div>
 
     }
 
@@ -96,7 +100,7 @@ const Write = () => {
                         <form onSubmit={handleSubmit}>
                             <input type='text' 
                                 className='write-title-inputbox'
-                                placeholder='제목을 입력해주세요'
+                                placeholder='title'
                                 value={title}
                                 onChange={(e) => setTitle(e.target.value)}
                                 />
@@ -126,7 +130,7 @@ const Write = () => {
                                     ],
                                 }}
                             />
-                        <button type='submit' className='write-submit-btn'>게시하기</button>
+                        <button type='submit' className='write-submit-btn'>submit</button>
                         </form>
                         
                     </div> 

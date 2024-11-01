@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { registerUser } from '../../features/authSlice';
 import Modal from '../../component/Modal';
+import { useTranslation } from 'react-i18next';
 
 const SignUpFirst = () => {
     //여러개의 input값을 가져와야 할 때 default
@@ -20,6 +21,9 @@ const SignUpFirst = () => {
     const [ errorMessage,setErrorMessage ] = useState('');
     const dispatch = useDispatch();
     const navigate = useNavigate();
+
+    //다국어 처리 
+    const { t } = useTranslation();
 
     const onNavigate = () => {
         navigate('/signin');
@@ -61,17 +65,17 @@ const SignUpFirst = () => {
 
             <div className="signup signup-container">
                 <div className="signup top">
-                    <div className="signup top-title">회원가입</div>
+                    <div className="signup top-title">{t('sign up')}</div>
                 </div>
 
                 <form onSubmit={handleSubmit}>
                     <div className="signup email">
                         <div className='email-container'>
-                            <div className='signup-email'>이메일주소*</div>
+                            <div className='signup-email'>{t('email')}*</div>
                             <input
                                 className='bottom-border'
                                 type='email'
-                                placeholder='이메일을 입력해주세요'
+                                placeholder={t('email-placeholder')}
                                 value={formData.email}
                                 name='email'
                                 onChange={onChangeInfo}
@@ -81,11 +85,11 @@ const SignUpFirst = () => {
                     
                     <div className="signup password">
                         <div className='password-container'>
-                            <div className='signup-pw'>비밀번호*</div>
+                            <div className='signup-pw'>{t('password')}*</div>
                             <input 
                                 className='bottom-border'
                                 type='password'
-                                placeholder='8~15자 이내, 대문자와 특수기호를 포함해주세요.'
+                                placeholder={t('password-validation')}
                                 value={formData.password}
                                 name='password'
                                 onChange={onChangeInfo}
@@ -95,11 +99,11 @@ const SignUpFirst = () => {
 
                     <div className="signup password">
                         <div className='password-container'>
-                            <div className='signup-pw'>비밀번호확인*</div>
+                            <div className='signup-pw'>{t('password confirm')}*</div>
                             <input 
                                 className='bottom-border'
                                 type='password'
-                                placeholder='비밀번호를 다시 입력해주세요'
+                                placeholder='Comfirm your password.'
                                 
                             />
                         </div>
@@ -107,9 +111,9 @@ const SignUpFirst = () => {
 
                     <div className="signup nickname">
                             <div className='nickname-container'>
-                                <div  className='mid-content'>닉네임*</div>
+                                <div  className='mid-content'>{t('nickname')}*</div>
                                 <input className='bottom-border' 
-                                    placeholder='닉네임을 입력해주세요'
+                                    placeholder={t('nickname-placeholder')}
                                     value={formData.nickname}
                                     name='nickname'
                                     onChange={onChangeInfo}
@@ -120,10 +124,10 @@ const SignUpFirst = () => {
                     
                     <div className="signup pnumber">
                         <div className='phone-container'>
-                            <div className='mid-content'>핸드폰 번호*</div>
+                            <div className='mid-content'>
+                            {t('phone')}*</div>
                             <input 
                                 className='bottom-border' 
-                                placeholder='핸드폰 번호를 입력해주세요'
                                 value={formData.telNumber}
                                 name='telNumber'
                                 onChange={onChangeInfo}
@@ -134,10 +138,9 @@ const SignUpFirst = () => {
 
                     <div className="signup address">
                         <div className='address1-container'>
-                            <div className='mid-content'>주소*</div>
+                            <div className='mid-content'>{t('address1')}*</div>
                             <input 
                                 className='bottom-border' 
-                                placeholder='주소를 입력해주세요'
                                 value={formData.address}
                                 name='address'
                                 onChange={onChangeInfo}
@@ -148,10 +151,9 @@ const SignUpFirst = () => {
 
                     <div className="signup detailed-address">
                         <div className='address2-container'>
-                            <div className='mid-content'>상세주소</div>
+                            <div className='mid-content'>{t('address2')}</div>
                             <input 
                                 className='bottom-border' 
-                                placeholder='상세주소를 입력해주세요'
                                 value={formData.addressDetail}
                                 name='addressDetail'
                                 onChange={onChangeInfo}
@@ -166,15 +168,15 @@ const SignUpFirst = () => {
                         type='submit' 
                         
                     >
-                        회원가입
+                        {t('sign up')}
                     </button>
                     <p><Modal message={errorMessage} onClose={handleCloseModal} /></p>
                 </form>
 
                 <div className="signup bottom">
                     <div className='have-account'>
-                        <div className='account-yn'>이미 계정이 있으신가요?</div>
-                        <div><Link to={'/pages/signIn/SignIn'}>로그인</Link></div>
+                        <div className='account-yn'>{t('accountY/N')}</div>
+                        <div><Link to={'/signIn'}>{t('login')}</Link></div>
                     </div>
                 </div>
             </div>

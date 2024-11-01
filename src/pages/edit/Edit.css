@@ -128,6 +128,23 @@
     position: absolute;
     right: 15px;
     bottom: -150px;
+
+    font-size: 15px;
+    border-color: rgb(197, 197, 197);
+    border-radius: 20px;
+    border: none;
+    color: #a1a1a1;
+    box-shadow: 0 0 40px 40px rgb(197, 197, 197) inset, rgb(197, 197, 197) black;
+    transition: all 200ms ease-in-out;
+    width: 6vw;
+    height: 5vh;
+    
+    &:hover {
+      box-shadow: 0 0 10px 0 rgb(197, 197, 197) inset, 0 0 10px 4px rgb(197, 197, 197);
+      color: rgb(27, 27, 27);
+      cursor: pointer;
+    }
+
 }
 
 

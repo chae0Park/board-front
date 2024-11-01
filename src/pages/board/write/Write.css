@@ -107,6 +107,22 @@
     position: absolute;
     right: 8px;
     bottom: -140px;
+
+    margin: 0 5px 0;
+    font-size: 14px;
+    color: rgb(152, 152, 152);
+    border-radius: 20px;
+    border: none;
+    box-shadow: 0 0 40px 40px rgb(197, 197, 197) inset, rgb(197, 197, 197) ;
+    width: 6vw;
+    height: 5vh;
+
+    &:hover {
+        box-shadow: 0 0 10px 0 rgb(197, 197, 197) inset, 0 0 10px 4px rgb(197, 197, 197);
+        color: rgb(27, 27, 27);
+        cursor: pointer;
+      }
+
 }
 
 .w-detail-author-date{

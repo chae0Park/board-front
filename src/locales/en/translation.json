@@ -1,0 +1,45 @@
+{
+    "Board": "Board",
+    "board-title": "Let's share our stories on the board ✍️",
+    "comment": "comment",
+    "like" : "like",
+    "view" : "view",
+    "new" : "new",
+    "popular" : "popular",
+    "logout" : "log out",
+    "mypage" : "my page",
+    "login" : "log in",
+    "sign up" : "sign up",
+    "footer-desc" : "Feel free to express yourself!",
+    "all" : "all",
+    "title" : "title",
+    "content" : "content",
+    "nickname" : "nickname",
+    "search" : "search",
+    "language": "language",
+    "email":"email",
+    "email-placeholder" : "email@email.com",
+    "password" : "password",
+    "password-validation" : "Please use 8~15 characters, including special symbols.",
+    "password-placeholder" : "password",
+    "new here?" : "Are you new here?",
+    "password confirm" : "password confirm",
+    "nickname-placeholder" : "Please use less 10 letters",
+    "phone" : "phone",
+    "address1" : "address1",
+    "address2" : "address2",
+    "accountY/N" : "Do you already have an account?",
+    "please login" : "Please log in first to create a post.",
+    "comment here" : "comment here",
+    "reply here": "reply here",
+    "" : "",
+    "" : "",
+    "" : "",
+    "" : "",
+    "" : ""
+
+
+
+
+}
+

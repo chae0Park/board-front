@@ -34,10 +34,16 @@ const TokenControl = () => {
     }, []);
 
     const handleExtendSession = async () => {
+        const token = sessionStorage.getItem('token');
+        if (!token) {
+            console.error('No token found, please log in again.');
+            return;
+        }
+
         const response = await fetch('http://localhost:5000/api/extend-session', {
             method: 'POST',
             headers: {
-                'Authorization': `Bearer ${sessionStorage.getItem('token')}`, // Use sessionStorage here
+                'Authorization': `Bearer ${token}`,  // Use sessionStorage here
             },
         });
 
@@ -47,7 +53,9 @@ const TokenControl = () => {
             setNotification('Session extended successfully.'); // Optional: Notify user
             setIsModalVisible(false); // Close the modal
         } else {
-            console.error('Failed to extend session');
+            const errorData = await response.json(); // Get error response
+            setNotification(errorData.message || 'Failed to extend session. Please try again.'); // Notify user of error
+            console.error('Failed to extend session:', errorData);
         }
     };
 

@@ -3,11 +3,14 @@ import './SideBar.css';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchSearchFrequencies } from '../../../features/searchSlice';
+import { useTranslation } from 'react-i18next';
 
 const SideBar = () => {
     const dispatch = useDispatch();
     const frequencies = useSelector((state) => state.search.frequencies);
     const status = useSelector((state) => state.search.status);
+    //다국어 처리 
+    const { t } = useTranslation();
 
 
     useEffect(() => {
@@ -18,7 +21,7 @@ const SideBar = () => {
     
     return(
         <div className='SideBar'>
-            <div className='SideBar-title'>인기 검색어</div>
+            <div className='SideBar-title'>{t('popular')}</div>
 
             <div className='SideBar-icon-container'>
                 {status === 'succeeded' && frequencies.map((frequency) => (

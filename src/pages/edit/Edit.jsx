@@ -94,7 +94,7 @@ const Edit = () => {
                                 }}
                             />
 
-                        <button type='submit' className='Edit-submit-btn' onClick={handleSubmit}>수정하기</button>
+                        <button type='submit' className='Edit-submit-btn' onClick={handleSubmit}>edit</button>
                         
                         
                     </div> 

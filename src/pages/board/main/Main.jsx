@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchAllPosts,fetchPosts } from '../../../features/postSlice';
 import { PageProvider, usePageContext } from '../../../app/PageContext';
+import { useTranslation } from 'react-i18next';
 
 const Main = () => {
     const dispatch = useDispatch();    
@@ -16,6 +17,8 @@ const Main = () => {
     const { currentPage, setCurrentPage, initialPage, location } = usePageContext(); // Context에서 값 가져오기
     const postsPerPage = 3;
     const [ weeklyTop3, setWeeklyTop3 ] = useState([]);
+    //다국어 처리 
+    const { t } = useTranslation();
     
     //posts스토어를 통해 posts데이터들, 상태, 전체 포스트의 갯수를 가져옴 
     const posts = useSelector((state) => state.posts.posts);
@@ -64,53 +67,40 @@ const Main = () => {
             }
 
             const now =  new Date();
-            const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1); // 매달 1일로 설정
-            const endOfWeek = new Date();
-            endOfWeek.setDate(now.getDate() + (7 - now.getDay()));
-            endOfWeek.setHours(23, 59, 59, 999);
+            const isSunday = now.getDay() === 0;
+            
+            
     
             //if today's not Sunday
-            if(now.getDay() !== 0){
-                console.log('오늘이 일요일이 아닐 때 allPosts:', allPosts);
-                const topPosts = [...allPosts]
-                .filter((post) => {
-                    const postDate = new Date(post.createdAt);
-                    // console.log('게시물 날짜:', postDate); // 게시물 날짜 로그
-                    // console.log('필터링 기준: 오늘 시작:', startOfMonth, '다음 일요일:', endOfWeek);
-                    return postDate >= startOfMonth && postDate < endOfWeek;
-                })
-                .sort((a, b) => calculateScore(b) - calculateScore(a))
-                .slice(0, 3);
-                // topPosts 값을 로그로 출력
-                //console.log('오늘이 일요일이 아닐 때 선택된 주간 Top 3 게시물:', topPosts);
-                setWeeklyTop3(topPosts);
-            }else{ //일요일인 경우 
-                const topPosts = [...allPosts]
+            if(isSunday){
+                const topPosts = [...allPosts]                    
                     .sort((a, b) => calculateScore(b) - calculateScore(a))
                     .slice(0, 3);
-                    // topPosts 값을 로그로 출력
-                //console.log('오늘이 일요일일 때 선택된 주간 Top 3 게시물:', topPosts);
+                console.log('매주 일요일 주간 Top 3 게시물:', topPosts);
                 setWeeklyTop3(topPosts);
+            }else{ //일요일이 아닌경우엔 mock 데이터 쓰겠습니다.
+                const mockTopPosts = mockData;
+                setWeeklyTop3(mockTopPosts);
             }
         };
 
-
-        const now = new Date();
-        const nextSunday = now;
-        nextSunday.setDate(now.getDate() + (7 - now.getDay()) % 7);
-        nextSunday.setHours(23, 59, 59, 999);
-        // 남은 시간 로그
-        const timeUntilNextSunday = nextSunday - now;
+        updateWeeklyTop3(); // 초기 실행
 
         const timer = setTimeout(() => {
             updateWeeklyTop3();
-        }, timeUntilNextSunday);
+        }, 604800000);
 
         return () => clearTimeout(timer);
     }, [allPosts]);
 
 
-
+    const mockData =  
+         [
+            allPosts[11], 
+            allPosts[12], 
+            allPosts[13]
+        ];
+ 
     
     return(
         <>     
@@ -118,9 +108,11 @@ const Main = () => {
             {/* title under the Header component */}
             <div className='Main-Container1'>
                 <div className="Main-title">
-                        <div className='Main-title-writing'><Link to={'/write'} style={{ textDecoration: "none", color: "black"}}>
-                        게시판에서 <br/>다양한 이야기를 나눠보세요 ✍️
-                        </Link></div>
+                        <div className='Main-title-writing'>
+                            <Link to={'/write'} style={{ textDecoration: "none", color: "black"}}>
+                                {t('board-title')}
+                            </Link>
+                        </div>
                 </div>
             </div>
      

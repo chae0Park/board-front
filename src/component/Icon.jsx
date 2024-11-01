@@ -3,7 +3,7 @@ import './Icon.css';
 const Icon = ({term}) => {
     return(
         <div className='Icon'>
-            <button>{term}</button>
+            <button className='popularIcon'>{term}</button>
         </div>
     )
 }

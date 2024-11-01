@@ -5,6 +5,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { logoutUser } from '../../features/authSlice';
 import { useState } from 'react';
 import { fetchSearchedPosts } from '../../features/postSlice';
+import korea from '../../assets/image/south-korea.png';
+import english from '../../assets/image/united-kingdom.png';
+import { useTranslation } from 'react-i18next';
+import { useLanguage } from '../../locales/LanguageContext.js';
 
 
 
@@ -16,6 +20,9 @@ const Header = () => {
     const [searchValue, setSearchValue] = useState('');
     const [searchOption, setSearchOption] = useState('all');
 
+    const { t } = useTranslation();
+    const { changeLanguage } = useLanguage();
+    const [openLanguage, setOpenLanguage] = useState(false);
 
     //get the logging user from Redux
     const user = useSelector((state) => state.auth.user);
@@ -25,15 +32,17 @@ const Header = () => {
     }
     //async 가 없으면 로그아웃 처리 안된채로 메인으로 넘어감
     const handleLogout  = async () => {
-        console.log("로그아웃 요청 중...");
         await dispatch(logoutUser());
-        console.log("로그아웃 완료, 메인으로 이동 중...");
         onNavigate(); 
     };
     
     //search bar 돋보기 누르면 서치바 나옴 
     const handleSearchBar = () => {
         setClickSearchIcon((click) => !click);
+    }
+    // language 토글 
+    const handleLangBar = () => {
+        setOpenLanguage((click) => !click);
     }
 
     const handleSearchOptionChange = (event) => {
@@ -60,21 +69,21 @@ const Header = () => {
 
             <div className="header-container1">
                 <div className="left-img">✍️</div>
-                <div className="left-title"><Link to={'/'} style={{ textDecoration: "none", color: "black"}}>게시판</Link></div>
+                <div className="left-title"><Link to={'/'} style={{ textDecoration: "none", color: "black"}}>{t('Board')}</Link></div>
             </div>
             
             <div className="header-container2">
                 {clickSearchIcon && (
                     <div>
                         <select value={searchOption} onChange={handleSearchOptionChange}>
-                            <option value="all">전체</option>
-                            <option value="title">제목</option>
-                            <option value="content">내용</option>
-                            <option value="author">작성자명</option>
+                            <option value="all">{t('all')}</option>
+                            <option value="title">{t('title')}</option>
+                            <option value="content">{t('content')}</option>
+                            <option value="author">{t('nickname')}</option>
                         </select>
                         <input 
                             type='text' 
-                            placeholder='검색어 입력' 
+                            placeholder='search here' 
                             value={searchValue} 
                             onChange={handleSearchValueChange} 
                         />
@@ -82,7 +91,7 @@ const Header = () => {
                         type='button' 
                         onClick={handleSearch} 
                         style={{cursor:'pointer'}}
-                        >검색</button>
+                        >{t('search')}</button>
                     </div>
                 )}
                 <div className="search-icon" onClick={handleSearchBar} style={{cursor:'pointer'}}><img src={search} alt='search-icon'/></div>
@@ -94,14 +103,14 @@ const Header = () => {
                         style={{ textDecoration: "none", color: "black"}}
                         >
                         <button onClick={handleLogout} className='logout-btn'>
-                                로그아웃
+                            {t('logout')}
                         </button>
                         </Link>
                         <Link to={'/mypage'} 
                         style={{ textDecoration: "none", color: "black"}}
                         >
                         <button className='mypage-btn'>
-                                마이페이지
+                            {t('mypage')}
                         </button>
                         </Link>
                     </>
@@ -111,12 +120,21 @@ const Header = () => {
                         style={{ textDecoration: "none", color: "black"}}
                         >
                         <button type='submit' className="login-btn">
-                                로그인
+                            {t('login')}
                         </button>
                         </Link>
                     </>
                 )}
-                
+                <div>
+                    <p className='language' onClick={handleLangBar}>language</p>
+                    {openLanguage === true && (
+                        <div className='language-container'>
+                            <p className='lang-kor' onClick={() => changeLanguage('ko')}><img src={korea} alt='korea'/></p>
+                            <p className='lang-eng' onClick={() => changeLanguage('en')}><img src={english} alt='english'/></p>
+                        </div>
+                    )}
+                    
+                </div>
             </div>
             
             

@@ -1,8 +1,12 @@
 import { Link } from 'react-router-dom';
 import './Top3.css';
+import { useTranslation } from 'react-i18next';
 
 
 const Top3 = ({ post }) => {
+    //다국어 처리 
+    const { t } = useTranslation();
+
     if (!post) {
         return null; // 게시글이 없는 경우 null 반환
     }
@@ -31,9 +35,9 @@ const Top3 = ({ post }) => {
                     </Link>
                 </div>
                 <div className='Top3-btm'>
-                    <div>댓글 {commentCount} ·</div>
-                    <div>좋아요 {post.like} ·</div>
-                    <div>조회수 {post.views}</div>
+                    <div>{t('comment')} {commentCount} ·</div>
+                    <div>{t('like')} {post.like} ·</div>
+                    <div>{t('view')} {post.views}</div>
                 </div>
             </div>
         </div>

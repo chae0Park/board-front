@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react';
 import Comment from '../../../component/Comment';
 import Reply from '../../../component/Reply';
 import { addComment,fetchComments  } from '../../../features/commentSlice';
-import { fetchUserProfile } from '../../../features/authSlice';
+import { useTranslation } from 'react-i18next';
 
 
 
@@ -30,7 +30,8 @@ const Detail = () => {
     const [replyInputs, setReplyInputs] = useState({});
     const [showReplyInput, setShowReplyInput] = useState({}); // 각 댓글에 대한 토글 상태
 
-   
+   //다국어 처리 
+    const { t } = useTranslation();
 
     useEffect(() => {
         const fetchPostData = async () => {
@@ -161,7 +162,7 @@ const Detail = () => {
                         <div className='detail-author-profile'><img className='detail-profileImg' src={post.profileImage} alt={post.author} /></div>
                         <div className='detail-author-id'>{post.author} |</div>
                         <div className='detail-author-date'>
-                            작성일자: {new Date(post.createdAt).toLocaleDateString('en-US', {
+                            posted: {new Date(post.createdAt).toLocaleDateString('en-US', {
                                 year: 'numeric',
                                 month: 'short', // 월을 약어로 표시
                                 day: '2-digit'
@@ -169,7 +170,7 @@ const Detail = () => {
                         </div>
                         {post.updatedAt && (
                         <div className='detail-modified-date'>
-                            수정일자: {new Date(post.updatedAt).toLocaleDateString('en-US')}
+                            edited: {new Date(post.updatedAt).toLocaleDateString('en-US')}
                         </div>
                     )}
                     </div>
@@ -177,8 +178,8 @@ const Detail = () => {
                     <div className='detail-eidt-delete'>{/* 수정 | 삭제 */}
                     {currentUser && currentUser.nickname === post.author && ( // 수정 및 삭제 버튼 조건부 표시
                         <>
-                            <Link to={`/edit/${post._id}`}><button className='edit_btn'>수정</button></Link>
-                            <button className='delete_btn' onClick={() => {handleDelete(post._id)}}>삭제</button>
+                            <Link to={`/edit/${post._id}`}><button className='edit_btn'>edit</button></Link>
+                            <button className='delete_btn' onClick={() => {handleDelete(post._id)}}>delete</button>
                         </>
                     )}    
                     </div>
@@ -196,9 +197,9 @@ const Detail = () => {
                     
                     <div className='detail-like-comment'>
                         <div onClick={handleLike} style={{ cursor: 'pointer' }}>{likeActive ? '❤️' : '🤍'}</div>
-                        <div>like{}</div>
+                        <div>{t('like')}</div>
                         <div onClick={handleCommentToggle} style={{ cursor: 'pointer' }} > ✏️</div>
-                        <div>댓글</div>
+                        <div>{t('comment')}</div>
                     </div>
 
                     {isCommenting && ( // 댓글 창을 클릭하면 작성할 수 있도록 
@@ -207,10 +208,10 @@ const Detail = () => {
                                 value={commentInput}
                                 className='commentInput'
                                 onChange={(e) => setCommentInput(e.target.value)}
-                                placeholder='댓글을 입력하세요.'
+                                placeholder={t('comment here')}
                                 required
                             />
-                            <button type='submit'>등록</button>
+                            <button type='submit'>submit</button>
                         </form>
                     )}
                     <div className="comments-list">
@@ -229,10 +230,10 @@ const Detail = () => {
                                             <input
                                                 value={replyInputs[comment._id] || ''}
                                                 onChange={(e) => handleReplyInputChange( comment._id, e.target.value)}
-                                                placeholder='대댓글을 입력하세요.'
+                                                placeholder={t('reply here')}
                                                 className='replyInputbox'
                                             />
-                                            <button type='submit'>등록</button>
+                                            <button type='submit'>submit</button>
                                         </form>
                                     </div>
 
