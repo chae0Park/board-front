@@ -16,7 +16,7 @@ import { useTranslation } from 'react-i18next';
 const Write = () => {
     //로그인한 사용자의 data가져옴 
     const dispatch = useDispatch();
-    const { user } = useSelector(state => state.auth);  
+    const { user, userFetched } = useSelector(state => state.auth);  
     //게시물 내용을 저장함 
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
@@ -36,10 +36,10 @@ const Write = () => {
 
     //로그인한 유저의 정보를 가져온다 
     useEffect(() => {
-        if (user) {
-            dispatch(fetchUserProfile(user.id)); // 사용자 정보를 가져오는 액션 호출
+        if (user && !userFetched) { //로그인은 했는데 아직 유저 정보는 안갖고옴 
+            dispatch(fetchUserProfile(user.id)); 
         }
-    }, [dispatch, user]);
+    }, [dispatch, user, userFetched]);
 
     const handleCloseModal = () => {
         setModalOpen(false); 

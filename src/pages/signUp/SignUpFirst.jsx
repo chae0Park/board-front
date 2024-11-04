@@ -103,7 +103,7 @@ const SignUpFirst = () => {
                             <input 
                                 className='bottom-border'
                                 type='password'
-                                placeholder='Comfirm your password.'
+                                placeholder={t('password confirm')}
                                 
                             />
                         </div>
@@ -111,7 +111,7 @@ const SignUpFirst = () => {
 
                     <div className="signup nickname">
                             <div className='nickname-container'>
-                                <div  className='mid-content'>{t('nickname')}*</div>
+                                <div  className='mid-content'>{t('nickname-signup')}*</div>
                                 <input className='bottom-border' 
                                     placeholder={t('nickname-placeholder')}
                                     value={formData.nickname}

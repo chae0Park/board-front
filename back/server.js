@@ -1,6 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const session = require('express-session');
 require('dotenv').config();
 const jwtSecret = process.env.JWT_SECRET;
 const cors = require('cors');
@@ -13,14 +14,30 @@ const Post = require('./model/Post'); // Post 모델 임포트
 const Comment = require('./model/Comment');// Comment 모델 임포트
 const SearchFrequency = require('./model/SearchFrequency');
 const upload = require('./middleware/upload');
-//const { SourceTextModule } = require('vm');
-const { v4: uuidv4 } = require('uuid');
 
-//토큰 검증 시 사용되는 사인 혹은 도장임. - 위에 JWT_SECRET 명시해뒀음  
-//const JWT_SECRET = 'your_jwt_secret'; .env 파일을 만들어서 더 안전하게 보관할 예정
-
+//Middleware setup
 app.use(cors());
 app.use(express.json());
+app.use(session({
+    secret: 'My_Secr3t_Cod3_0202_QuEEn',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { maxAge: 10 * 60 * 1000 } // 10분
+}));
+// 세션 만료 체크 미들웨어 추가
+const sessionTimeout = 10 * 60 * 1000; // 10분
+
+app.use((req, res, next) => {
+    if (req.session.user) {
+        const currentTime = Date.now();
+        if (currentTime - req.session.lastActivity > sessionTimeout) {
+            req.session.destroy(); // 세션 만료, 세션 삭제
+            return res.status(401).json({ message: 'Session expired' });
+        }
+        req.session.lastActivity = currentTime; // 세션 활동 시간 갱신
+    }
+    next();
+});
 
 // 서버에서 uploads 폴더를 정적으로 제공 - 클라이언트가 접근하여 파일을 가져올 수 있도록 함 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -37,8 +54,9 @@ app.post('/api/register', async (req, res) => {
 
     // Check if user exists
     const existingUser = await User.findOne({ email });
+    const existingNickname = await User.findOne({ nickname });
     const existingTelNum = await User.findOne({ telNumber });
-    if (existingUser || existingTelNum) {
+    if (existingUser || existingTelNum || existingNickname) {
         return res.status(400).json({ message: 'User already exists' });
     }
 
@@ -65,8 +83,8 @@ app.post('/api/register', async (req, res) => {
 // Login Route
 app.post('/api/login', async (req, res) => {
     const { email, password } = req.body; //사용자가 이메일과 비번으로 req를 보냄
-
     const user = await User.findOne({ email });
+
     if (!user) {
         return res.status(400).json({ message: 'Invalid email or password' });
     }
@@ -75,35 +93,79 @@ app.post('/api/login', async (req, res) => {
     if (!isPasswordValid) {
         return res.status(400).json({ message: 'Invalid email or password' });
     }
+
     //토큰생성: jwt.sign(payload, secret, options)
-    const token = jwt.sign({ id: user._id, email: user.email, nickname: user.nickname, profileImage: user.profileImage }, jwtSecret, { expiresIn: '1h' });
-    res.status(200).json({ token, user: { id: user._id, nickname: user.nickname, email: user.email, profileImage: user.profileImage } });
+    const token = jwt.sign(
+        { 
+            id: user._id, 
+            email: user.email, 
+            nickname: user.nickname, 
+            profileImage: user.profileImage 
+        }, 
+        jwtSecret, 
+        { expiresIn: '10m' }
+        );
+
+    //req.session에 사용자 id 저장
+    req.session.user = user._id;; //save user ID in session
+    req.session.lastActivity = Date.now(); // set last activity time
+
+    res.status(200).json({ 
+        token, 
+        user: { 
+            id: user._id, 
+            nickname: user.nickname, 
+            email: user.email, 
+            profileImage: user.profileImage 
+        } 
+    });
 });
 
-// Middleware to check for token (for protected routes)
+// Middleware
 const authenticateToken = (req, res, next) => {
     const token = req.headers['authorization']?.split(' ')[1];
     if (!token) return res.status(401).json({ message: 'Access denied' });
 
     try {//토큰검증: 클라이언트가 보낸 JWT의 유효성 확인 - 시크릿코드 서명확인해서 변조 유무 체크
-        const user = jwt.verify(token, jwtSecret);
+        // const user = jwt.verify(token, jwtSecret);
+        jwt.verify(token, jwtSecret, (err, user) => {
+            if (err) {
+                // 만료된 토큰인 경우
+                if (err.name === 'TokenExpiredError') {
+                    return res.status(401).json({ message: 'Token expired' });
+                }
+                return res.status(403).json({ message: 'Invalid token' });
+            }
         req.user = user;
         next();
+        });
     } catch (error) {
+        console.error('authenticateToken-Token validation error:', error);
         res.status(403).json({ message: 'Invalid token' });
     }
 };
+// session sliding middleware
+const refreshSessionAndToken = (req, res) => {
+    const token = req.headers['authorization']?.split(' ')[1];
+    if (token) {
+        try {
+            const user = jwt.verify(token, jwtSecret);
+            req.session.lastActivity = Date.now(); // Refresh session activity time
+            const newToken = jwt.sign(
+                { id: user.id, email: user.email, nickname: user.nickname },
+                jwtSecret,
+                { expiresIn: '10m' }
+            );
+            return res.json({ token: newToken });
+        } catch (error) {
+            return res.status(403).json({ message: 'Invalid token' });
+        }
+    }
+};
 
-//jwt 연장 시간 늘리기
-app.post('/api/extend-session', authenticateToken, (req, res) => {
-    // Create a new token with the same payload
-    const token = jwt.sign(
-        { id: req.user._id, email: req.user.email, nickname: req.user.nickname, profileImage: req.user.profileImage }, 
-        jwtSecret, 
-        { expiresIn: '1h' }
-    );
-    res.status(200).json({ token });
-});
+// Token refresh endpoint
+app.post('/api/refresh-token', authenticateToken, refreshSessionAndToken);
+
 
 // User Profile Route (GET)
 app.get('/api/users/:id', authenticateToken, async (req, res) => {
@@ -190,7 +252,7 @@ app.put('/api/users/:id', authenticateToken, upload.single('profileImage'), asyn
 // Protected Route for Logout (or other secured actions)
 app.post('/api/logout', authenticateToken, (req, res) => {
     console.log("로그아웃 성공적으로 호출");
-    // Clear token logic could be handled on client side.
+    req.session.destroy(); //clear session
     res.status(200).json({ message: 'Logged out successfully' });
     
 });
@@ -246,8 +308,10 @@ app.post('/api/post', upload.array('files', 5), async (req, res) => {
 
 //전체 posts데이터 불러오기 
 app.get('/api/posts/all', async (req, res) => {
+    // console.log("주간 3 게시물을 불러오긴 위한 api호출 ")
     try {
         const posts = await Post.find(); // 모든 게시글 조회
+        // console.log("api호출 후 posts :", posts);
         res.json(posts); // 모든 게시글을 반환
     } catch (error) {
         res.status(500).json({ message: '게시글을 불러오는 중 오류 발생' });

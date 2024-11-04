@@ -11,7 +11,7 @@ const MyPage = () => {
     const dispatch = useDispatch();
     const [nav, setNav] = useState('post'); // 디폴트를 post로 세팅하고 코멘트 라이크 누를 때 바뀌게
     const fileInputRef = useRef(null);
-    const { user } = useSelector(state => state.auth); // Redux 상태에서 사용자 정보 가져오기
+    const { user, userFetched } = useSelector(state => state.auth);
     const { myPosts, postsWithComments, likedPosts } = useSelector(state => ({
         myPosts: state.posts.myPosts,
         postsWithComments: state.posts.postsWithComments,
@@ -22,11 +22,11 @@ const MyPage = () => {
 
     // 사용자 정보를 가져오는 액션 호출
     useEffect(() => {
-        if (user) {
+        if (user && !userFetched) {
             dispatch(fetchUserProfile(user.id)); 
         }
 
-    }, [dispatch, user]);
+    }, [dispatch, user, userFetched]);
   
     //유저 프로필 사진 변경 
     const handleFileChange = (event) => {
@@ -49,8 +49,10 @@ const MyPage = () => {
 
     //유저가 작성한 게시글 가지고 오기  - post 
     useEffect(() => {   
-        dispatch(fetchMyPosts(user.id));
-    }, [dispatch, user.id]);
+        if(user && userFetched){ // userFetched가 true일 때만 호출
+            dispatch(fetchMyPosts(user.id));
+        }  
+    }, [dispatch, user, userFetched]);
 
 
 

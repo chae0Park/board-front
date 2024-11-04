@@ -115,6 +115,7 @@ const Main = () => {
                         </div>
                 </div>
             </div>
+
      
             <div className='weekly'>weekely top3</div>
             <div className='top3-container'>

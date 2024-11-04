@@ -10,6 +10,7 @@ import Edit from './pages/edit/Edit';
 import { PageProvider } from '../src/app/PageContext';
 import { LanguageProvider } from './locales/LanguageContext';
 import SearchResult from './pages/board/search result/SearchResult';
+import SessionManager from './component/SessionManager';
 
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
     <PageProvider>
       <LanguageProvider>
         <div className="App"> 
+          <SessionManager />
           <Header />   
           <Routes>
             <Route path="/" element={<Main />} />  

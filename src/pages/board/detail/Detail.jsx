@@ -12,7 +12,7 @@ import { useTranslation } from 'react-i18next';
 
 
 const Detail = () => {
-    const { id  } = useParams();
+    const { id } = useParams();
     const { token } = useSelector((state) => state.auth); // 토큰 가져오기
     const isLoggedIn = !!token; // 토큰이 있으면 로그인 상태
     const dispatch = useDispatch();

@@ -5,6 +5,9 @@ import axios from "axios";
 const initialState = {
     user: JSON.parse(sessionStorage.getItem('user')) || null, // 새로고침 시 로컬스토리지에서 불러오기
     token: sessionStorage.getItem('token') || null, // 새로고침 시 토큰도 로컬스토리지에서 불러오기
+    userFetched: false, // 추가된 상태
+    isModalVisible: false,
+    
 };
 
 const authSlice = createSlice({
@@ -14,19 +17,21 @@ const authSlice = createSlice({
         loginSuccess: (state, action) => {
             state.user = action.payload.user;
             state.token = action.payload.token;
+            state.userFetched = false; // 로그인 시 초기화
             // sessionStorage에 user와 token 저장
             sessionStorage.setItem('user', JSON.stringify(state.user));
-            sessionStorage.setItem('token', action.payload.token);
         },
         logoutSuccess: (state) => {
             state.user = null;
             state.token = null;
+            state.userFetched = false; // 로그아웃 시 초기화
              // 로그아웃 시 sessionStorage에서 삭제
              sessionStorage.removeItem('user');
              sessionStorage.removeItem('token');
         },
         setUserProfile: (state, action) => {
             state.user = action.payload; // 사용자 정보를 업데이트
+            state.userFetched = true; // 사용자 정보가 성공적으로 로드되었음을 나타냄
             sessionStorage.setItem('user', JSON.stringify(state.user)); // 업데이트된 사용자 정보를 로컬 스토리지에 저장
         },
         profileImageUploadSuccess: (state, action) => {
@@ -35,7 +40,12 @@ const authSlice = createSlice({
                 state.user.profileImage = action.payload.profileImage;
                 sessionStorage.setItem('user', JSON.stringify(state.user)); // 업데이트된 유저 정보를 sessionStorage에 저장
             }
-        }
+            state.uploadingProfileImage = false; // 업로드 완료 상태 업데이트
+        },
+        uploadProfileImage: (state) => {
+            state.uploadingProfileImage = true; // 업로드 시작 상태
+            state.uploadError = null; // 이전 오류 초기화
+        },
     },
 });
 
@@ -55,7 +65,7 @@ export const loginUser = (formData) => async (dispatch) => {
     try{
         const response = await axios.post('http://localhost:5000/api/login', formData);
         dispatch(loginSuccess(response.data));
-        sessionStorage.setItem('token', response.data.token);
+        sessionStorage.setItem('token', response.data.token); // 토큰 저장
     } catch (error) {
         throw error;
     }
