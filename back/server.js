@@ -50,14 +50,30 @@ mongoose.connect('mongodb://localhost:27017/your_db_name',
 
 // Register Route - http://localhost:5000/api/register
 app.post('/api/register', async (req, res) => {
-    const {email, password, nickname, telNumber, address, addressDetail, agreedPersonal, profileImage } = req.body;
+    const {
+            email, 
+            password, 
+            nickname, 
+            telNumber, 
+            address, 
+            addressDetail, 
+            agreedPersonal, 
+            profileImage, 
+        } = req.body;
 
     // Check if user exists
     const existingUser = await User.findOne({ email });
     const existingNickname = await User.findOne({ nickname });
     const existingTelNum = await User.findOne({ telNumber });
-    if (existingUser || existingTelNum || existingNickname) {
-        return res.status(400).json({ message: 'User already exists' });
+
+    if (existingUser) {
+        return res.status(400).json({ message: '이메일이 이미 존재합니다.' });
+    }
+    if (existingNickname) {
+        return res.status(400).json({ message: '닉네임이 이미 존재합니다.' });
+    }
+    if (existingTelNum) {
+        return res.status(400).json({ message: '전화번호가 이미 존재합니다.' });
     }
 
     // Hash password
@@ -72,7 +88,8 @@ app.post('/api/register', async (req, res) => {
             addressDetail, 
             agreedPersonal,
             profileImage: null
-        });
+        }
+    );
    
     await newUser.save(); // MongoDB에 사용자 저장
 

@@ -51,13 +51,32 @@ const authSlice = createSlice({
 
 export const { loginSuccess, logoutSuccess, setUserProfile, profileImageUploadSuccess } = authSlice.actions;
 
+//validation을 포함시키지 않은 api
+// export const registerUser = (formData) => async (dispatch) => {
+//     try{
+//         await axios.post('http://localhost:5000/api/register', formData);
+//         alert('Registration successful!');
+//     } catch (error) {
+//         throw error;
+//     }
+// }
 
+//validation을 포함 시킨 api 
 export const registerUser = (formData) => async (dispatch) => {
-    try{
-        await axios.post('http://localhost:5000/api/register', formData);
+    try {
+        // 중복 체크를 위해 동일한 API를 호출
+        const response = await axios.post('http://localhost:5000/api/register', formData);
         alert('Registration successful!');
+
+        // 성공적으로 등록한 경우 사용자 정보를 업데이트
+        dispatch(loginSuccess(response.data));
     } catch (error) {
-        throw error;
+        if (error.response) {
+            // 서버에서 반환한 에러 메시지 사용
+            alert(error.response.data.message);
+        } else {
+            alert('Registration failed');
+        }
     }
 }
 
@@ -107,8 +126,6 @@ export const logoutUser = () => async (dispatch, getState) => {
     }
 };
 
-
-
 // 프로필 사진 업로드 액션
 export const uploadProfileImage = (imageFile, userId) => async (dispatch, getState) => {
     try {
@@ -122,11 +139,6 @@ export const uploadProfileImage = (imageFile, userId) => async (dispatch, getSta
                 'Authorization': `Bearer ${token}`, // 인증 토큰을 헤더에 포함
             },
         };
-
-                // 로그 추가
-                console.log('Sending PUT request to:', `http://localhost:5000/api/users/${userId}`);
-                console.log('Form Data:', formData.get('profileImage')); // 파일 이름 확인
-                console.log('Auth Token:', token);
 
         const response = await axios.put(`http://localhost:5000/api/users/${userId}`, formData, config);
         dispatch(profileImageUploadSuccess({ profileImage: response.data.profileImage }));

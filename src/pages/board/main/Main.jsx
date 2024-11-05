@@ -55,51 +55,31 @@ const Main = () => {
         return (post.like * 3) + ((post.comments ? post.comments.length : 0) * 2) + post.views;
     };
         
+    //데이터들 중 가장 스코어가 높은 데이터 3개를 점수 내림차 순으로 정렬
+    const updateWeeklyTop3 = () => {
+        if (allPosts.length === 0) {
+            console.log('No posts available!');
+            return;
+        }
+        
+        const topPosts = [...allPosts]
+            .sort((a, b) => calculateScore(b) - calculateScore(a))
+            .slice(0, 3);
+        console.log('Updated Weekly Top 3:', topPosts);
+        setWeeklyTop3(topPosts);
+    };
     
-
-     //자정 기준으로 주간 Top 3 업데이트 
+    // 매주 일요일마다 데이터 갱신 
     useEffect(() => {
-        const updateWeeklyTop3 = () => {
-            // console.log('updateWeeklyTop3 실행 allPosts는?', allPosts);
-            if (allPosts.length === 0) {
-                console.log('allPosts가 비어 있습니다!');
-                return; // 비어 있을 경우 함수 종료
-            }
-
-            const now =  new Date();
-            const isSunday = now.getDay() === 0;
-            
-            
-    
-            //if today's not Sunday
-            if(isSunday){
-                const topPosts = [...allPosts]                    
-                    .sort((a, b) => calculateScore(b) - calculateScore(a))
-                    .slice(0, 3);
-                console.log('매주 일요일 주간 Top 3 게시물:', topPosts);
-                setWeeklyTop3(topPosts);
-            }else{ //일요일이 아닌경우엔 mock 데이터 쓰겠습니다.
-                const mockTopPosts = mockData;
-                setWeeklyTop3(mockTopPosts);
-            }
-        };
-
-        updateWeeklyTop3(); // 초기 실행
-
-        const timer = setTimeout(() => {
+        const now = new Date();
+        //const isSunday = now.getDay() === 0;
+        const isTuesday = now.getDay() === 2;
+        if(isTuesday){
             updateWeeklyTop3();
-        }, 604800000);
-
-        return () => clearTimeout(timer);
-    }, [allPosts]);
-
-
-    const mockData =  
-         [
-            allPosts[11], 
-            allPosts[12], 
-            allPosts[13]
-        ];
+        }
+    // eslint-disable-next-line
+    }, [allPosts]); //allPosts가 변경될 때 마다 확인 
+    
  
     
     return(

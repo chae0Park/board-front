@@ -21,7 +21,18 @@
     margin: 10px 0 10px;
 }
 
-.SideBar-icon-container{
+/* .SideBar-icon-container{
     display: flex;
     justify-content: center;
+} */
+
+.SideBar-icon-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 1fr: 3개의 동일한 너비로 나누기 */
+    gap: 10px;  /* 아이콘 간의 간격 */
+}
+
+.SideBar-icon-container .icon {
+    display: flex;
+    justify-content: center;  /* 아이콘을 수평 가운데 정렬 */
 }
