@@ -9,7 +9,7 @@ import './MyPage.css';
 
 const MyPage = () => {
     const dispatch = useDispatch();
-    const [nav, setNav] = useState('post'); // 디폴트를 post로 세팅하고 코멘트 라이크 누를 때 바뀌게
+    const [nav, setNav] = useState('post'); 
     const fileInputRef = useRef(null);
     const { user, userFetched } = useSelector(state => state.auth);
     const { myPosts, postsWithComments, likedPosts } = useSelector(state => ({
@@ -35,6 +35,7 @@ const MyPage = () => {
             dispatch(uploadProfileImage(file, user.id))
         }
     };
+    
     // profileImage 클릭으로 input 트리거 
     const handleProfileClick = () => {
         fileInputRef.current.click(); 
@@ -70,7 +71,8 @@ const MyPage = () => {
                         alt="Profile" 
                         onClick={handleProfileClick} 
 
-                        style={{ width: '100px', height: '100px', borderRadius: '100%', cursor: 'pointer'  }} />
+                        style={{ width: '100px', height: '100px', borderRadius: '100%', cursor: 'pointer'  }} 
+                    />
                 </div>
                 <div>
                     <h4 className='MyPage-nickname'>welcome, {user.nickname}</h4>
@@ -78,9 +80,24 @@ const MyPage = () => {
                     {/* <p>{user.id}</p> */}
                 </div>
                 <div className='MyPage-navbar'>
-                    <p onClick={() => handleSelect('post')}>post</p>
-                    <p onClick={() => handleSelect('comment')}>comment</p>
-                    <p onClick={() => handleSelect('like')}>like</p>
+                    <p 
+                        onClick={() => handleSelect('post')}
+                        className={nav === 'post' ? 'active' : ''}
+                    >
+                        post
+                    </p>
+                    <p 
+                        onClick={() => handleSelect('comment')}
+                        className={nav === 'comment' ? 'active' : ''}
+                    >
+                        comment
+                    </p>
+                    <p 
+                        onClick={() => handleSelect('like')}
+                        className={nav === 'like' ? 'active' : ''}
+                    >
+                        like
+                    </p>
                     <p><Link to={'/write'} style={{textDecoration:'none', color:'black'}}>create post</Link></p>
                 </div>
             </div>

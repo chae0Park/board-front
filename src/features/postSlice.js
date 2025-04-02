@@ -62,13 +62,12 @@ export const fetchSearchedPosts = createAsyncThunk(
 export const fetchPostById = createAsyncThunk('posts/fetchPostById', async (id) => {
     console.log("Fetching Post with ID:", id); 
     try{
-        await axios.get(`http://localhost:5000/api/posts/${id}/view`);
-        //게시물 정보 가지고 오기 
-        const response = await axios.get(`http://localhost:5000/api/post/${id}`);
+        await axios.get(`http://localhost:5000/api/posts/${id}/view`); //게시물 조회수 증가
+        const response = await axios.get(`http://localhost:5000/api/post/${id}`); //상세 게시물 조회
         return response.data;
     }catch(error){
         console.error('게시물 가져오기 오류:', error);
-        throw error; // 에러 발생 시 throw
+        throw error;
     }
         
 });
@@ -93,7 +92,7 @@ export const likePost = createAsyncThunk('posts/likePost', async (id, { getState
 });
 
 
-//이미지 동영상 파일 업로드 기능 포함 게시글 작성 
+// 게시글 작성 
 export const addPost = createAsyncThunk('posts/addPost', async (formData) => {
     //get the token from sessionStroage
     const token = sessionStorage.getItem('token');
@@ -103,7 +102,8 @@ export const addPost = createAsyncThunk('posts/addPost', async (formData) => {
         headers: { 
             'Content-Type': 'multipart/form-data',
             'Authorization': `Bearer ${token}`, // Attach the token 
-        }
+        },
+        withCredentials: true,
     });
     return response.data;
 
@@ -119,6 +119,7 @@ export const updatePost = createAsyncThunk('posts/updatePost', async ({ id, form
             headers: {
                 'Content-Type': 'multipart/form-data',  // FormData를 전송할 때 이 헤더를 사용
             },
+            withCredentials: true,
         });
         return response.data;
     } catch (error) {

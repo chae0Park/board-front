@@ -25,7 +25,7 @@ const SideBar = () => {
 
             <div className='SideBar-icon-container'>
                 {status === 'succeeded' && frequencies.map((frequency) => (
-                    <Icon key={frequency._id} term={frequency.term} /> // term prop을 Icon에 전달
+                    <Icon className='icon' key={frequency._id} term={frequency.term} /> // term prop을 Icon에 전달
                 ))}        
             </div>
         </div>

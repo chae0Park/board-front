@@ -34,5 +34,28 @@
     "comment here" : "댓글 작성",
     "reply here": "대댓글 작성",
     "session notification" : "곧 세션이 만료됩니다. 남은시간:",
-    "session extend" : "세션이 연장되었습니다."
+    "session extend" : "세션이 연장되었습니다.",
+    "log-in feature" : "로그인을 하셔야 이용할 수 있는 기능입니다.",
+    "delete-confirm":"정말로 이 게시글을 삭제하시겠습니까?",
+    "delete-msg" : "게시글이 삭제되었습니다.",
+    "delete-err-msg": "게시글 삭제에 실패했습니다.",
+    "find no post": "게시물을 찾을 수 없습니다..", 
+    "valid-email" : "유효한 이메일을 입력하세요.",
+    "email-required" : "이메일은 필수입니다.",
+    "password more than 8" : "비밀번호는 최소 8자 이상이어야 합니다.",
+    "password less than 15" : "비밀번호는 최대 15자까지 가능합니다.",
+    "cap needed" : "대문자를 포함해야 합니다.",
+    "special character needed" : "특수 문자를 포함해야 합니다.",
+    "password required" : "비밀번호는 필수입니다.",
+    "password different" : "비밀번호가 다릅니다.",
+    "password confirm required" : "비밀번호 확인은 필수입니다.",
+    "nickname less than 11" : "닉네임은 10자 이내여야 합니다.",
+    "nickname included only string and int" : "닉네임은 문자와 숫자만 포함해야 합니다.",
+    "nickname required" : "닉네임은 필수입니다.",
+    "phone required" : "전화번호는 필수입니다.",
+    "address1 required" : "주소는 필수입니다.",
+    "" : "",
+    "" : ""
+
+
 }

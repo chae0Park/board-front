@@ -1,67 +1,39 @@
-
-
 .Detail{
-    /* width: 70vw;
-    position: relative;
-    left: 14%;
-    top: 14px;
-    padding: 20px;
-    background-color: rgb(255, 99, 71, 0.3); */
-
     width: 70vw;
-    min-height: 100vh;  /* 최소 높이를 화면 크기에 맞추고 */
     position: relative;
     left: 14%;
     top: 14px;
     padding: 20px;
-    /* background-color: rgb(255, 99, 71, 0.3); */
     box-sizing: border-box;
     padding-bottom: 50px; /* 내용물 하단에 여유 공간 추가 */
 }
 
 .detail-title{
-    /* border: 1px solid black; */
+    font-size: 37px;
     height: 8%;
-    padding-left: 10px;
-}
-
-.detail-title-writing{
-    font-size: 25px;
-    font-weight: bold;
-    position: relative;
-    bottom: 5px;
-   
-
+    margin-bottom: 20px;
 }
 
 .detail-container1{
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 30px;
-
-    padding-right: 20px;
-
-    /* border: 1px solid black; */
-    
+    margin-bottom: 50px;
 }
 
 .detail-author-profile, .detail-author-id, .detail-author-date{
     margin-right: 5px;
+    font-size: 15px;
 }
 
 .detail-author-info{
-    /* border: 1px solid black; */
-    
     display: flex;
     align-items: center;
 }
 
 .detail-author-profile{
-    width: 50px;
-    height: 50px;
-    
-    
+    width: 30px;
+    height: 30px;
 }
 
 .detail-profileImg{
@@ -70,26 +42,16 @@
     border-radius: 100%;
 }
 
-.detail-divide{
-    width: 70vw;
-    height: 1px;
-    background-color: gray;
-    margin-bottom: 44px;
-}
-
-
 .detail-container2{
-    /* width: 70vw;
-    height: 80vh; */
-    max-height: 60vh;  /* 댓글 영역이 화면의 60%를 넘지 않게 설정 */
-    overflow-y: auto;   /* 스크롤이 가능하도록 설정 */
-    padding-right: 10px;  /* 스크롤 바를 고려한 패딩 */
+    overflow-y: auto;   /*스크롤이 가능하도록 설정*/
+    padding-right: 10px;  /*스크롤 바를 고려한 패딩 */
     margin-bottom: 20px;  /* 댓글 리스트 밑에 여유 공간 추가 */
 }
+
 .detail-content{
-    /* height: 80%; */
-    font-size: 17px;
+    font-size: 22px;
     margin-bottom: 30px;
+    padding: 30px 0 30px;
 }
 
 .detail-content img {
@@ -103,16 +65,18 @@
     display: flex;
     font-size: 15px;
     margin-top: 10px;
-    margin-bottom: 20px;
+    margin-bottom: 50px;
 }
 
 
-.edit_btn, .delete_btn{
+.detail_edit_btn, .detail_delete_btn{
     border: 0;
     background-color: transparent;
+    /* border: 1px solid black; */
+    font-size: 15px; 
 }
 
-.edit_btn:hover, .delete_btn:hover{
+.detail_edit_btn:hover, .detail_delete_btn:hover{
     cursor: pointer;
 }
 
@@ -135,8 +99,23 @@
 }
 
 .reply-input, .reply_to_comment{
-    position: relative;
-    left: 20px;
-    
+    margin-left: 1rem;   
 }
 
+.reply-btn{
+    background-color: #4CAF50; /* Green */ 
+    border: none;
+    color: white; 
+    padding: 0.5rem; 
+    text-align: center; 
+    text-decoration: none; 
+    display: inline-block; 
+    font-size: 13px; 
+    margin: 4px 2px; 
+    cursor: pointer; 
+    border-radius: 10%;
+}
+
+.replies_in_detail{
+    margin-left: 3rem;
+}

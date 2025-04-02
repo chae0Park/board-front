@@ -30,7 +30,7 @@ const Header = () => {
     const onNavigate = () => {
         navigate("/signin");
     }
-    //async 가 없으면 로그아웃 처리 안된채로 메인으로 넘어감
+
     const handleLogout  = async () => {
         await dispatch(logoutUser());
         onNavigate(); 

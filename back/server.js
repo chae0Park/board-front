@@ -16,8 +16,13 @@ const SearchFrequency = require('./model/SearchFrequency');
 const upload = require('./middleware/upload');
 
 //Middleware setup
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:3000',  // 클라이언트의 URL
+    credentials: true  // 쿠키를 허용하려면 credentials 옵션을 true로 설정
+}));
 app.use(express.json());
+const cookieParser = require('cookie-parser');
+app.use(cookieParser());
 app.use(session({
     secret: 'My_Secr3t_Cod3_0202_QuEEn',
     resave: false,
@@ -111,24 +116,44 @@ app.post('/api/login', async (req, res) => {
         return res.status(400).json({ message: 'Invalid email or password' });
     }
 
-    //토큰생성: jwt.sign(payload, secret, options)
-    const token = jwt.sign(
+     // 액세스 토큰 생성: 짧은 만료 시간 (예: 1시간)
+     const accessToken = jwt.sign(
         { 
             id: user._id, 
             email: user.email, 
             nickname: user.nickname, 
             profileImage: user.profileImage 
         }, 
-        jwtSecret, 
-        { expiresIn: '10m' }
-        );
+        process.env.JWT_SECRET, 
+        { expiresIn: '5m' }  // 1시간 후 만료
+    );
+    console.log("로그인 할 때 만든 accessToken", accessToken);
+
+    // 리프레시 토큰 생성: 긴 만료 시간 (예: 7일)
+    const refreshToken = jwt.sign(
+        { 
+            id: user._id, 
+            email: user.email 
+        }, 
+        process.env.REFRESH_TOKEN_SECRET,  // 리프레시 토큰 전용 비밀 키
+        { expiresIn: '7d' }  // 7일 후 만료
+    );
+    console.log("로그인 할 때 만든 refreshToken", refreshToken);
+
 
     //req.session에 사용자 id 저장
-    req.session.user = user._id;; //save user ID in session
-    req.session.lastActivity = Date.now(); // set last activity time
+    req.session.user = user._id;; //사용자 아이디
+    req.session.lastActivity = Date.now(); // 마지막 사용시간 
 
-    res.status(200).json({ 
-        token, 
+    // 리프레시 토큰을 HTTP-only 쿠키로 설정
+    res.cookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+    
+
+    return res.status(200).json({ 
+        token: accessToken, //클라이언트에게 accessToken을 전달
         user: { 
             id: user._id, 
             nickname: user.nickname, 
@@ -139,49 +164,94 @@ app.post('/api/login', async (req, res) => {
 });
 
 // Middleware
-const authenticateToken = (req, res, next) => {
-    const token = req.headers['authorization']?.split(' ')[1];
-    if (!token) return res.status(401).json({ message: 'Access denied' });
+const authenticateToken = async (req, res, next) => {
+    const token = req.headers['authorization']?.split(' ')[1]; 
+    console.log('authenticateToken - Token in header:', token);
 
-    try {//토큰검증: 클라이언트가 보낸 JWT의 유효성 확인 - 시크릿코드 서명확인해서 변조 유무 체크
-        // const user = jwt.verify(token, jwtSecret);
+    if (!token) {
+        return res.status(401).json({ message: 'Access denied' });
+    }
+
+    try {
         jwt.verify(token, jwtSecret, (err, user) => {
             if (err) {
-                // 만료된 토큰인 경우
                 if (err.name === 'TokenExpiredError') {
-                    return res.status(401).json({ message: 'Token expired' });
+                    const refreshToken = req.cookies.refreshToken;
+                    console.log('authenticateToken 함수에서 가져온 refreshToken', refreshToken);
+                    if (!refreshToken) {
+                        return res.status(403).json({ message: 'no refreshToken exists' });
+                    }
+
+                    // 리프레시 토큰을 검증하고 새 액세스 토큰 발급
+                    jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (refreshErr, refreshUser) => {
+                        if (refreshErr) {
+                            req.session.destroy((err) => {
+                                if (err) {
+                                    return res.status(500).json({ message: 'Failed to end session' });
+                                }
+                                // 세션 쿠키 삭제
+                                res.clearCookie('connect.sid'); 
+                            return res.status(403).json({ message: 'Invalid refresh token' });
+                            });
+                        }
+
+                        // 새 액세스 토큰 발급
+                        const newAccessToken = jwt.sign(
+                            { id: refreshUser.id, email: refreshUser.email },
+                            process.env.JWT_SECRET,
+                            { expiresIn: '15m' }
+                        );
+
+                        console.log('newAccessToken', newAccessToken);
+
+                        jwt.verify(newAccessToken, process.env.JWT_SECRET, (newAccessTokenErr, user) => {
+                            if (newAccessTokenErr) {
+                                // 새 액세스 토큰이 유효하지 않다면
+                                return res.status(403).json({ message: 'Invalid new access token' });
+                            }
+
+                            req.user = user;
+                            console.log('req.user: ', req.user);
+                            next();
+                        });
+                    });
+                } else {
+                    return res.status(403).json({ message: 'Invalid token' });
                 }
-                return res.status(403).json({ message: 'Invalid token' });
+            } else {
+                req.user = user; //? 왜 undefiend 로 찍혀나오는 걸까?
+                next(); 
             }
-        req.user = user;
-        next();
         });
-    } catch (error) {
-        console.error('authenticateToken-Token validation error:', error);
-        res.status(403).json({ message: 'Invalid token' });
-    }
-};
-// session sliding middleware
-const refreshSessionAndToken = (req, res) => {
-    const token = req.headers['authorization']?.split(' ')[1];
-    if (token) {
-        try {
-            const user = jwt.verify(token, jwtSecret);
-            req.session.lastActivity = Date.now(); // Refresh session activity time
-            const newToken = jwt.sign(
-                { id: user.id, email: user.email, nickname: user.nickname },
-                jwtSecret,
-                { expiresIn: '10m' }
-            );
-            return res.json({ token: newToken });
-        } catch (error) {
-            return res.status(403).json({ message: 'Invalid token' });
-        }
+    } catch (err) {
+        console.error('Token validation error:', error);
+        res.status(403).json({ message: 'Invalid token' }); 
     }
 };
 
-// Token refresh endpoint
-app.post('/api/refresh-token', authenticateToken, refreshSessionAndToken);
+
+// const authenticateToken = (req, res, next) => {
+//     const token = req.headers['authorization']?.split(' ')[1];
+//     if (!token) return res.status(401).json({ message: 'Access denied' });
+
+//     try {//토큰검증: 클라이언트가 보낸 JWT의 유효성 확인 - 시크릿코드 서명확인해서 변조 유무 체크
+//         // const user = jwt.verify(token, jwtSecret);
+//         jwt.verify(token, jwtSecret, (err, user) => {
+//             if (err) {
+//                 // 만료된 토큰인 경우
+//                 if (err.name === 'TokenExpiredError') {
+//                     return res.status(401).json({ message: 'Token expired' });
+//                 }
+//                 return res.status(403).json({ message: 'Invalid token' });
+//             }
+//         req.user = user;
+//         next();
+//         });
+//     } catch (error) {
+//         console.error('authenticateToken-Token validation error:', error);
+//         res.status(403).json({ message: 'Invalid token' });
+//     }
+// };
 
 
 // User Profile Route (GET)
@@ -201,9 +271,9 @@ app.get('/api/users/:id', authenticateToken, async (req, res) => {
 });
 
 
-//also works now, async/await 이용
+
 app.put('/api/users/:id', authenticateToken, upload.single('profileImage'), async (req, res) => {
-    const userId = req.user.id; // JWT에서 복호화된 사용자 ID
+    const userId = req.user.id; 
     const newProfileImage = req.file ? `/uploads/${req.file.filename}` : null; // 업로드된 파일이 있으면 경로 설정
 
     try {
@@ -232,70 +302,26 @@ app.put('/api/users/:id', authenticateToken, upload.single('profileImage'), asyn
 });
 
 
-//this one works
-// app.put('/api/users/:id', authenticateToken, upload.single('profileImage'), (req, res) => {
-//     console.log('PUT request received for user ID:', req.params.id); // 요청이 들어왔는지 확인
-
-//     // req.user에서 사용자 ID 가져오기
-//     const userId = req.user.id; // JWT에서 복호화된 사용자 ID
-//     const newProfileImage = req.file ? `/uploads/${req.file.filename}` : null; // 업로드된 파일이 있으면 경로 설정
-
-//     // 로그 추가
-//     console.log('가지고 온 userId', userId)
-//     console.log('Form Data:', req.file); // 업로드된 파일 정보
-    
-
-//     // 사용자 ID로 사용자 찾기
-//     User.findById(userId)
-//         .then(existingUser => {
-//             if (!existingUser) {
-//                 return res.status(404).json({ message: 'User not found' });
-//             }
-
-//             // 사용자 정보가 존재하는 경우 프로필 이미지 업데이트
-//             return User.findByIdAndUpdate(userId, { profileImage: newProfileImage }, { new: true });
-//         })
-//         .then(updatedUser => {
-//             console.log('Updated user:', updatedUser); // 추가
-//             res.status(200).json({ message: 'Profile image updated successfully', profileImage: updatedUser.profileImage });
-//         })
-//         .catch(error => {
-//             console.error('Error in PUT route:', error); // 수정
-//             res.status(500).json({ message: 'Error uploading profile image', error });
-//         });
-// });
-
-
+//accessToken 을 삭제하는 방식으로 로그아웃 진행 
 // Protected Route for Logout (or other secured actions)
 app.post('/api/logout', authenticateToken, (req, res) => {
     console.log("로그아웃 성공적으로 호출");
     req.session.destroy(); //clear session
     res.status(200).json({ message: 'Logged out successfully' });
-    
 });
 
 
 
 //post method==================================================================
-//글 작성 하기 전, 로그인 한 유저만  글 쓸 수 있게 authentication 처리 
-app.post('/api/post', upload.array('files', 5), async (req, res) => {
-    console.log("post got called!!!");
-    try {
-        if (!req.headers.authorization) {
-            return res.status(401).json({ error: 'Authorization header is missing' });
-        }
 
-        // Decode JWT to get the user info
-        const token = req.headers.authorization.split(' ')[1];
-        const decoded = jwt.verify(token, jwtSecret);
-        const userId = decoded.id; // Assuming 'id' is in the JWT payload
+app.post('/api/post',authenticateToken, upload.array('files', 5), async (req, res) => {
+    try {
+        const userId = req.user.id; 
 
         const { title, content } = req.body;
-        // Get the uploaded file paths
-        //const filePaths = req.files.map(file => file.path);
         const filePaths = req.files.map(file => `/uploads/${file.filename}`);
 
-        // 최신 프로필 이미지를 가져오기
+        //user의 최신 프로필 사진 반영
         const user = await User.findById(userId); // userId를 사용하여 현재 유저 정보를 조회
         const profileImage = user.profileImage; // 최신 프로필 이미지를 가져오기
 
@@ -303,7 +329,7 @@ app.post('/api/post', upload.array('files', 5), async (req, res) => {
         const newPost = new Post({
             title,
             content,
-            author: decoded.nickname, // 여전히 nickname을 사용
+            author: user.nickname, // 여전히 nickname을 사용
             profileImage: profileImage, // 최신 프로필 이미지 사용
             userId, // Include userId
             createdAt: Date.now(),
@@ -323,12 +349,17 @@ app.post('/api/post', upload.array('files', 5), async (req, res) => {
     }
 });
 
-//전체 posts데이터 불러오기 
+//전체 posts데이터 불러오기 - 주간 3 게시물을 불러오긴 위한 api
 app.get('/api/posts/all', async (req, res) => {
-    // console.log("주간 3 게시물을 불러오긴 위한 api호출 ")
     try {
-        const posts = await Post.find(); // 모든 게시글 조회
-        // console.log("api호출 후 posts :", posts);
+        const posts = await Post.find()
+        .populate('userId', 'profileImage'); 
+
+        posts.forEach(post => {
+            post.profileImage = post.userId.profileImage;
+            post.userId = undefined; // delete userId to not include in res
+        })
+
         res.json(posts); // 모든 게시글을 반환
     } catch (error) {
         res.status(500).json({ message: '게시글을 불러오는 중 오류 발생' });
@@ -340,13 +371,22 @@ app.get('/api/post', async (req, res) => {
     //console.log('요청 받은 페이지:',req.query.page);
     const page = parseInt(req.query.page) || 0;
     const limit = parseInt(req.query.limit) || 3;
-    //const skip = (page - 1)*limit;
     const skip = page * limit;
 
     try{
-        const posts = await Post.find().sort({ createdAt: -1 }).skip(skip).limit(limit);
-        const totalPosts = await Post.countDocuments();
+        const posts = await Post.find()
+        .populate('userId', 'profileImage')
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit);
 
+        posts.forEach(post => {
+            post.profileImage = post.userId.profileImage;
+            post.userId = undefined; // delete userId to not include in res
+        });
+
+        const totalPosts = await Post.countDocuments();
+        
         res.json({
             posts,
             totalPosts,
@@ -399,17 +439,29 @@ app.get('/api/posts/search', async (req, res) => {
         //댓글이 달린 게시물 가져오기 
         const comments = userId ? await Comment.find({ userId }) : [];
         const commentedPostIds = comments.map(comment => comment.postId); // 코맨트가 가지고 있는 포스트 아이디 들을 추출해냄
-        const postsWithComments = await Post.find({ _id: {$in: commentedPostIds } }); 
+        const postsWithComments = await Post.find({ _id: {$in: commentedPostIds } })
+            .populate('userId', 'profileImage');
+            
+            postsWithComments.forEach(postWithComments => postWithComments.profileImage = postWithComments.userId.profileImage);
 
         //좋아요를 누른 게시물가져오기 
-        const likedPosts = userId ? await Post.find({ likedBy : userId }) : [];
+        const likedPosts = userId ? await Post.find({ likedBy : userId })
+            .populate('userId', 'profileImage')
+        : [];
         
+        if(likedPosts.length > 0){
+            likedPosts.forEach(likedPost => likedPost.profileImage = likedPost.userId.profileImage);
+        }
+
 
         if (date) {
             filters.date = { $gte: new Date(date) };
         }
         //필터에 따른 게시물 가져오기 
-        const posts = await Post.find(filters);
+        const posts = await Post.find(filters)
+        .populate('userId', 'profileImage');
+
+        posts.forEach(post =>  post.profileImage = post.userId.profileImage );
         
         console.log('query값:', query);
         res.json({posts, query, postsWithComments, likedPosts});
@@ -434,39 +486,9 @@ app.get('/api/search-frequencies', async (req, res) => {
     }
 });
 
-// skip() 때문에 버그 걸릴 때 
-// app.get('/api/post', async (req, res) => {
-//     const lastId = req.query.last_id; // 클라이언트에서 last_id를 쿼리 파라미터로 받음
-//     const limit = parseInt(req.query.limit) || 3;
-
-//     try {
-//         let posts;
-//         if (lastId) {
-//             // last_id가 제공된 경우 그 이후의 문서를 가져옴
-//             posts = await Post.find({ _id: { $gt: lastId } }).limit(limit);
-//         } else {
-//             // last_id가 없으면 처음부터 가져옴
-//             posts = await Post.find().limit(limit);
-//         }
-
-//         const totalPosts = await Post.countDocuments();
-
-//         res.json({
-//             posts,
-//             totalPosts,
-//             totalPages: Math.ceil(totalPosts / limit),
-//         });
-
-//     } catch (error) {
-//         res.status(500).json({ message: '게시글을 불러오는 중 오류 발생' });
-//     }
-// });
 
 
-
-
-
-// 상세 게시물 불러오기 렌더링 최적화 후 
+// 상세 게시물
 app.get('/api/post/:id', async(req,res) => {
     const { id } = req.params;
     try {
@@ -478,11 +500,13 @@ app.get('/api/post/:id', async(req,res) => {
                     select: 'profileImage nickname' // 필요한 필드만 선택
                 }
             })
-            .populate('userId'); // 게시글 작성자 정보
+            .populate('userId', 'profileImage'); 
+
+            post.profileImage = post.userId.profileImage;
+
         if (!post) {
             return res.status(404).json({ message: '게시글을 찾을 수 없습니다.' });
         }
-        console.log("post값- 이미지 주소 잘보기",post);
         res.json(post);
     } catch (error) {
         console.error('게시글을 불러오는 중 오류 발생:', error);
@@ -582,19 +606,9 @@ app.delete('/api/post/:id', async (req, res) => {
 
 //댓글===========================================================================
 // 댓글 작성
-app.post('/api/comment/:postId', async (req, res) => {
-    console.log("comment got called!!!");
+app.post('/api/comment/:postId', authenticateToken, async (req, res) => {
     try {
-        // Authorization 헤더 확인
-        if (!req.headers.authorization) {
-            return res.status(401).json({ error: 'Authorization header is missing' });
-        }
-
-        // JWT 디코드하여 사용자 정보 얻기
-        const token = req.headers.authorization.split(' ')[1];
-        const decoded = jwt.verify(token, jwtSecret);
-        const userId = decoded.id; // JWT 페이로드에서 'id' 가져오기
-
+        const userId = req.user.id; 
         // 게시글 ID와 댓글 내용을 받아옴
         const { content, parentId } = req.body; 
         const postId = req.params.postId; // URL에서 게시글 ID 가져오기
@@ -644,14 +658,24 @@ app.get('/api/comments/:postId', async (req, res) => {
     const { postId } = req.params;
 
     try {
-        const comments = await Comment.find({ postId, parentId: null });
-        const replies = await Comment.find({ postId, parentId: { $ne: null} });
+        const comments = await Comment.find({ postId, parentId: null })
+            .populate('userId', 'profileImage');
+
+            comments.forEach(comment => comment.profileImage = comment.userId.profileImage);
+
+        const replies = await Comment.find({ postId, parentId: { $ne: null} })
+            .populate('userId', 'profileImage');
+
+            replies.forEach(reply => reply.profileImage = reply.userId.profileImage);
 
         //부모 댓글에 대댓글 추가 
         const commentsWithReplies = comments.map(comment => ({
             ...comment.toObject(),
             replies: replies.filter(reply => reply.parentId.toString() === comment._id.toString())
         }));
+
+        // console.log('댓글과 대댓글의 생김새,', commentsWithReplies);
+
         res.status(200).json(commentsWithReplies);
     } catch (error) {
         console.error('Error fetching comments:', error);

@@ -4,7 +4,6 @@ import './Post.css';
 import { useTranslation } from 'react-i18next';
 
 const Post = ({ post }) => {
-    //다국어 처리 
     const { t } = useTranslation();
 
     if (!post) {

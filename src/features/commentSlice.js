@@ -47,6 +47,7 @@ export const addComment = (postId, content, parentId = null ) => async (dispatch
             headers: {
                 Authorization: `Bearer ${token}`,
             },
+            withCredentials: true,
         });
 
         // 댓글 추가 성공 후, 댓글에 postId를 추가하여 상태 업데이트

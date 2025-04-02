@@ -36,8 +36,26 @@
     "reply here": "reply here",
     "session notification" : "Your session will expire soon. Left time: ",
     "session extend" : "Session extended successfully.",
-    "" : "",
-    "" : ""
+    "pleas sign in " : "",
+    "log-in feature" : "This feature is only available after logging in.",
+    "delete-confirm" : "Are you sure you want to delete this post?",
+    "delete-msg" : "Post deleted successfully.",
+    "delete-err-msg": "Failed to delete the post.",
+    "find no post": "No post found.",
+    "valid-email": "Please enter a valid email.",
+    "email-required": "Email is required.",
+    "password more than 8": "Password must be at least 8 characters long.",
+    "password less than 15": "Password can be up to 15 characters.",
+    "cap needed": "Uppercase letters are required.",
+    "special character needed": "Special characters are required.",
+    "password required": "Password is required.",
+    "password different": "Passwords do not match.",
+    "password confirm required": "Password confirmation is required.",
+    "nickname less than 11": "Nickname must be within 10 characters.",
+    "nickname included only string and int": "Nickname can only include letters and numbers.",
+    "nickname required": "Nickname is required.",
+    "phone required": "Phone number is required.",
+    "address1 required": "Address is required."
 
 
 

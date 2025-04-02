@@ -2,7 +2,6 @@
 .Page-container{
     display: flex;
    justify-content: center;
-   padding-top: 8px;
 }
 
 .Page-container > div{

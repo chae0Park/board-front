@@ -1,12 +1,11 @@
 import './Detail.css';
-//import Header from '../header/Header'
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { fetchPosts, fetchPostById, deletePost, likePost  } from '../../../features/postSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { useState, useEffect } from 'react';
 import Comment from '../../../component/Comment';
 import Reply from '../../../component/Reply';
-import { addComment,fetchComments  } from '../../../features/commentSlice';
+import { addComment, fetchComments } from '../../../features/commentSlice'; 
 import { useTranslation } from 'react-i18next';
 
 
@@ -34,10 +33,10 @@ const Detail = () => {
     const { t } = useTranslation();
 
     useEffect(() => {
-        const fetchPostData = async () => {
+        const fetchPostData = async() => {
             setLoading(true); // 데이터 로딩 시작
-            await dispatch(fetchPostById(id));
-            await dispatch(fetchComments(id)); // 댓글 목록 가져오기
+            dispatch(fetchPostById(id));
+            dispatch(fetchComments(id)); 
             setLoading(false); // 데이터 로딩 완료
         };
 
@@ -52,16 +51,16 @@ const Detail = () => {
 
     // 삭제
     const handleDelete =  (id) => {
-        if (window.confirm('정말로 이 게시글을 삭제하시겠습니까?')){
+        if (window.confirm(t('delete-confirm'))){
             dispatch(deletePost(id))
                 .then(() => {
-                    alert('게시글이 삭제되었습니다.');
+                    alert(t('delete-msg'));
                     navigate('/');  // 게시물이 남아 있으면 목록 페이지로 이동
                     
                 })
                 .catch((error) => {
                     console.error('게시글 삭제 중 오류 발생:', error);
-                    alert('게시글 삭제에 실패했습니다.');
+                    alert(t('delete-err-msg'));
                 });
         }
         
@@ -78,7 +77,7 @@ const Detail = () => {
 
     const handleLike = async () => {
         if (!isLoggedIn) {
-            alert('로그인 후 좋아요를 누를 수 있습니다.');
+            alert(t('log-in feature'));
             return;
         }
 
@@ -146,16 +145,13 @@ const Detail = () => {
     
 
     if (!post) {
-        return <p>게시물을 찾을 수 없습니다.</p>;
+        return <p>{t('find no post')}</p>;
     }
 
     return(
         <div>
             <div className='Detail'>
-                <div className='detail-title'>
-                    <div className='detail-title-writing'>{post.title}</div>
-                    
-                </div>
+                <div className='detail-title'>{post.title}</div>
 
                 <div className='detail-container1'>
                     <div className='detail-author-info'>
@@ -178,16 +174,12 @@ const Detail = () => {
                     <div className='detail-eidt-delete'>{/* 수정 | 삭제 */}
                     {currentUser && currentUser.nickname === post.author && ( // 수정 및 삭제 버튼 조건부 표시
                         <>
-                            <Link to={`/edit/${post._id}`}><button className='edit_btn'>edit</button></Link>
-                            <button className='delete_btn' onClick={() => {handleDelete(post._id)}}>delete</button>
+                            <Link to={`/edit/${post._id}`}><button className='detail_edit_btn'>edit</button></Link>
+                            <button className='detail_delete_btn' onClick={() => {handleDelete(post._id)}}>delete</button>
                         </>
                     )}    
                     </div>
-                </div>
-
-                {/* 구분선 */}
-                <div className='detail-divide'></div>  
-
+                </div> 
                     
                 <div className='detail-container2'>
                     <div className='detail-content'>
@@ -233,7 +225,7 @@ const Detail = () => {
                                                 placeholder={t('reply here')}
                                                 className='replyInputbox'
                                             />
-                                            <button type='submit'>submit</button>
+                                            <button className='reply-btn' type='submit'>submit</button>
                                         </form>
                                     </div>
 
@@ -255,9 +247,7 @@ const Detail = () => {
                                 )}
                             </div>
                         ))}
-                    </div> 
-                    
-                     
+                    </div>    
                     
                 </div>
             </div>

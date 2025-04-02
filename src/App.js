@@ -10,16 +10,14 @@ import Edit from './pages/edit/Edit';
 import { PageProvider } from '../src/app/PageContext';
 import { LanguageProvider } from './locales/LanguageContext';
 import SearchResult from './pages/board/search result/SearchResult';
-import SessionManager from './component/SessionManager';
 
-
+// 비번: !Testuser1
 function App() {
 
   return (
     <PageProvider>
       <LanguageProvider>
         <div className="App"> 
-          <SessionManager />
           <Header />   
           <Routes>
             <Route path="/" element={<Main />} />  

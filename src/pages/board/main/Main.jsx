@@ -25,6 +25,7 @@ const Main = () => {
     const postStatus = useSelector((state) => state.posts.status); 
     const totalPosts = useSelector((state) => state.posts.totalPosts);
     const allPosts = useSelector((state) => state.posts.allPosts);
+    
     //weekly top3 를 위한 posts전체 데이터 - page 처리 하지 않음 
     useEffect(() => {
         if (postStatus !== 'succeeded') {
@@ -47,38 +48,48 @@ const Main = () => {
             dispatch(fetchPosts({ page: initialPage, postsPerPage })); // 새 페이지에 대한 데이터 호출
         }
     }, [ location.search, currentPage, setCurrentPage, dispatch, initialPage ]);
-//currentPage, initialPage를 없애니 다른 페이지로 넘어갈때 오류 뜸 
+    //currentPage, initialPage를 없애니 다른 페이지로 넘어갈때 오류 뜸 
 
-
-    //weeklyTop3 게시물 선정을 위해 점수를 계산하는 함수 
+    //weeklyTop3 점수 계산하는 함수 
     const calculateScore = (post) => {
         return (post.like * 3) + ((post.comments ? post.comments.length : 0) * 2) + post.views;
     };
         
-    //데이터들 중 가장 스코어가 높은 데이터 3개를 점수 내림차 순으로 정렬
-    const updateWeeklyTop3 = () => {
-        if (allPosts.length === 0) {
-            console.log('No posts available!');
-            return;
-        }
-        
-        const topPosts = [...allPosts]
-            .sort((a, b) => calculateScore(b) - calculateScore(a))
-            .slice(0, 3);
-        console.log('Updated Weekly Top 3:', topPosts);
-        setWeeklyTop3(topPosts);
-    };
-    
-    // 매주 일요일마다 데이터 갱신 
+   
+    // weeklyTop3 계산하는 로직
     useEffect(() => {
-        const now = new Date();
-        //const isSunday = now.getDay() === 0;
-        const isTuesday = now.getDay() === 2;
-        if(isTuesday){
-            updateWeeklyTop3();
+        if (allPosts.length > 0) {
+            // 모든 게시물의 점수를 계산하여 상위 3개 게시물 뽑기
+            const sortedPosts = [...allPosts]
+                .map((post) => ({
+                    ...post,
+                    score: calculateScore(post),
+                }))
+                .sort((a, b) => b.score - a.score) // 점수 내림차순 정렬
+                .slice(0, 3); // 상위 3개 게시물 추출
+
+            setWeeklyTop3(sortedPosts); // weeklyTop3 상태에 저장
+
+            // 로컬 스토리지에 저장 (선택 사항)
+            localStorage.setItem('weeklyTop3', JSON.stringify(sortedPosts));
         }
-    // eslint-disable-next-line
-    }, [allPosts]); //allPosts가 변경될 때 마다 확인 
+    }, [allPosts]);
+
+    // 매주 새로운 Top 3를 계산하기 위한 날짜 비교 (주기적 갱신)
+    useEffect(() => {
+        const lastFetchedDate = localStorage.getItem('lastFetchedDate');
+        const now = new Date();
+        const lastFetched = new Date(lastFetchedDate);
+
+        const isSunday = now.getDay() === 0;
+
+        // 로컬 스토리지에 저장된 날짜가 없거나, 1주일이 지났다면 다시 갱신
+        if ((!lastFetchedDate || now - lastFetched >= 7 * 24 * 60 * 60 * 1000) && isSunday) {
+            // 새로운 Top 3 게시물 계산 (주기적으로 갱신)
+            dispatch(fetchAllPosts());  // 새로 데이터를 가져와서 갱신
+            localStorage.setItem('lastFetchedDate', now.toISOString());
+        }
+    }, [dispatch]);
     
  
     
