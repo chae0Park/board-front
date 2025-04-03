@@ -52,7 +52,7 @@ const getPreviewText = (content) => {
     const tempElement = document.createElement('div');
     tempElement.innerHTML = textOnly;
     const plainText = tempElement.textContent || tempElement.innerText || '';
-    return plainText.length > 70 ? plainText.slice(0, 70) + '...' : plainText;
+    return plainText.length > 60 ? plainText.slice(0, 60) + '...' : plainText;
 };
 
 export default Top3;

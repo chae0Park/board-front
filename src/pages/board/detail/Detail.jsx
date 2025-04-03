@@ -77,7 +77,7 @@ const Detail = () => {
 
     const handleLike = async () => {
         if (!isLoggedIn) {
-            alert(t(' feature'));
+            alert(t('log-in feature'));
             return;
         }
 
@@ -111,7 +111,7 @@ const Detail = () => {
     const handleCommentSubmit = async (e, parentId = null) => {
         e.preventDefault();
         if (!isLoggedIn) {
-            alert(t(' feature'));
+            alert(t('log-in feature'));
             return;
         }
         const content = parentId ? replyInputs[parentId] : commentInput;
@@ -193,7 +193,7 @@ const Detail = () => {
                 <div className='detail-container2'>
                     <div className='detail-content'>
                          {/* 마크다운이나 HTML을 처리할 수 있는 방법을 통해 변환된 내용을 렌더링 */}
-                         <span dangerouslySetInnerHTML={{ __html: post.content }} />                        
+                         <div dangerouslySetInnerHTML={{ __html: post.content }} />                        
                     </div>
                     
                     <div className='detail-like-comment'>
@@ -213,7 +213,7 @@ const Detail = () => {
                                 placeholder={t('comment here')}
                                 required
                             />
-                            <button type='submit'>submit</button>
+                            <button className='reply-btn' type='submit'>submit</button>
                         </form>
                     )}
                     <div className="comments-list">
@@ -258,10 +258,8 @@ const Detail = () => {
                             </div>
                         ))}
                     </div>    
-                    
                 </div>
             </div>
-               
         </div>
             
             

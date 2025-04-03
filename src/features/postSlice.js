@@ -65,7 +65,7 @@ export const fetchPostById = createAsyncThunk('posts/fetchPostById', async (id) 
         await axios.get(`http://localhost:5000/api/posts/${id}/view`); //게시물 조회수 증가
         
         const postResponse = await axios.get(`http://localhost:5000/api/post/${id}`); //상세 게시물 조회
-        const commentsResponse = await axios.get(`http://localhost:5000/api/comments/${id}`);
+        const commentsResponse = await axios.get(`http://localhost:5000/api/comments/${id}`); // 게시물의 댓글 목록 조회
         
         return { post: postResponse.data, comments: commentsResponse.data };
     }catch(error){

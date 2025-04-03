@@ -2,7 +2,7 @@
 .Comment{
     /* border: 1px solid gray; */
     font-size: 13px;
-    padding-top: 20px;
+    padding-top: 15px;
 }
 
 .comment-top{
@@ -12,10 +12,9 @@
 .comment-author-profileImg{
     width: 30px;
     height: 30px;
-
+    margin-right: 0.5rem;
 }
 
 .comment-author-profileImg{
     border-radius: 100%;
-    border: 1px solid gray;
 }

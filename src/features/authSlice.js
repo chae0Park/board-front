@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
+import { fetchAllPosts, fetchPosts } from "./postSlice";
 
 
 const initialState = {
@@ -134,7 +135,12 @@ export const uploadProfileImage = (imageFile, userId) => async (dispatch, getSta
         };
 
         const response = await axios.put(`http://localhost:5000/api/users/${userId}`, formData, config);
-        dispatch(profileImageUploadSuccess({ profileImage: response.data.profileImage }));
+        const newProfileImage = response.data.profileImage;
+
+        dispatch(profileImageUploadSuccess({ profileImage: newProfileImage }));
+
+        dispatch(fetchPosts({ page: 0, postsPerPage: 3 }));  // 현재 페이지의 게시글 다시 불러오기
+        dispatch(fetchAllPosts());  // 전체 게시글 다시 불러오기
 
         // 성공 시 알림
         alert('Profile image updated successfully!');

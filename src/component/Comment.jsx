@@ -25,7 +25,6 @@ const Comment = ({author, profileImg, timestamp, content, flip }) => {
             <div>{content}</div>
             {/* 여기 좋아요 기능도 넣을거임 */}
             <p onClick={flip} style={{ cursor: 'pointer' }} >✏️</p>
-
        </div>
     )
 }
