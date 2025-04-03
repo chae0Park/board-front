@@ -58,21 +58,4 @@ export const addComment = (postId, content, parentId = null ) => async (dispatch
     }
 };
 
-// 댓글 목록 가져오기 액션
-export const fetchComments = (postId) => async (dispatch, getState) => {
-    const token = getState().auth.token; // 인증 토큰 가져오기
-
-    try {
-        const response = await axios.get(`http://localhost:5000/api/comments/${postId}`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
-
-        dispatch(setComments(response.data)); // 댓글 목록 상태에 설정
-    } catch (error) {
-        console.error('Error fetching comments:', error);
-    }
-};
-
 export default commentSlice.reducer;

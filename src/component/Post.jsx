@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import React from 'react';
 import './Post.css';
 import { useTranslation } from 'react-i18next';
+import default_user from '../assets/image/user-1699635_1280.png'
 
 const Post = ({ post }) => {
     const { t } = useTranslation();
@@ -37,7 +38,7 @@ const Post = ({ post }) => {
        
             <div className='Post-content'>         
                     <div className='Post-top'>
-                        <div className='Post-img'><img className='Post-profile-img' src={post.profileImage} alt={post.author} /></div>
+                        <div className='Post-img'><img className='Post-profile-img' src={post.profileImage ? post.profileImage : default_user} alt={post.author} /></div>
                         <div className='Post-user-info'> 
                             <div className='Post-id'>{post.author}</div>
                             {/* 일/월/년 순으로  */}

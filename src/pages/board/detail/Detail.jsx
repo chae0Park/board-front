@@ -5,8 +5,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useState, useEffect } from 'react';
 import Comment from '../../../component/Comment';
 import Reply from '../../../component/Reply';
-import { addComment, fetchComments } from '../../../features/commentSlice'; 
+import { addComment } from '../../../features/commentSlice'; 
 import { useTranslation } from 'react-i18next';
+import default_user from '../../../assets/image/user-1699635_1280.png';
 
 
 
@@ -18,7 +19,7 @@ const Detail = () => {
     const navigate = useNavigate();
     const post = useSelector((state) => state.posts.currentPost);
     const currentUser = useSelector((state) => state.auth.user);
-    const comments = useSelector((state) => state.comments.comments);
+    const comments = useSelector((state) => state.posts.comments);
     
     const [loading, setLoading] = useState(true);
     const [likeActive, setLikeActive] = useState(false);
@@ -36,7 +37,6 @@ const Detail = () => {
         const fetchPostData = async() => {
             setLoading(true); // 데이터 로딩 시작
             dispatch(fetchPostById(id));
-            dispatch(fetchComments(id)); 
             setLoading(false); // 데이터 로딩 완료
         };
 
@@ -77,7 +77,7 @@ const Detail = () => {
 
     const handleLike = async () => {
         if (!isLoggedIn) {
-            alert(t('log-in feature'));
+            alert(t(' feature'));
             return;
         }
 
@@ -110,16 +110,19 @@ const Detail = () => {
     //댓글 작성 
     const handleCommentSubmit = async (e, parentId = null) => {
         e.preventDefault();
+        if (!isLoggedIn) {
+            alert(t(' feature'));
+            return;
+        }
         const content = parentId ? replyInputs[parentId] : commentInput;
 
         if(content.trim()){
             await dispatch(addComment(post._id, content, parentId));
+            await dispatch(fetchPostById(post._id));
             if(parentId){
                 setReplyInputs((prev) => ({...prev, [parentId]: '' })); //대댓글 입력 필드 초기화
                  // 대댓글 작성 후 댓글 목록을 다시 가져오기
-                await dispatch(fetchComments(post._id));
                 setShowReplyInput(prev => !prev);
-                
             } else{
                 setCommentInput('');
                 setIsCommenting(false);
@@ -137,7 +140,7 @@ const Detail = () => {
     };
     
      // 특정 포스트의 댓글만 필터링
-     const postComments = comments.filter(comment => comment.postId === post._id);
+     // ? const postComments = comments.filter(comment => comment.postId === post._id);
     
     if (loading) {
         return <p className="spinner">Loading...</p>; // 로딩 중 표시
@@ -155,20 +158,26 @@ const Detail = () => {
 
                 <div className='detail-container1'>
                     <div className='detail-author-info'>
-                        <div className='detail-author-profile'><img className='detail-profileImg' src={post.profileImage} alt={post.author} /></div>
+                        <div className='detail-author-profile'><img className='detail-profileImg' src={post.profileImage ? post.profileImage : default_user} alt={post.author} /></div>
                         <div className='detail-author-id'>{post.author} |</div>
-                        <div className='detail-author-date'>
+                        
+                        {post.updatedAt ? (
+                        <div className='detail-modified-date'>
+                            edited: {new Date(post.updatedAt).toLocaleDateString('en-US', {
+                                year: 'numeric',
+                                month: 'short', // 월을 약어로 표시
+                                day: '2-digit'
+                            })}
+                        </div>
+                        ) : (
+                            <div className='detail-author-date'>
                             posted: {new Date(post.createdAt).toLocaleDateString('en-US', {
                                 year: 'numeric',
                                 month: 'short', // 월을 약어로 표시
                                 day: '2-digit'
                             })}
                         </div>
-                        {post.updatedAt && (
-                        <div className='detail-modified-date'>
-                            edited: {new Date(post.updatedAt).toLocaleDateString('en-US')}
-                        </div>
-                    )}
+                        )}
                     </div>
                     
                     <div className='detail-eidt-delete'>{/* 수정 | 삭제 */}
@@ -189,9 +198,10 @@ const Detail = () => {
                     
                     <div className='detail-like-comment'>
                         <div onClick={handleLike} style={{ cursor: 'pointer' }}>{likeActive ? '❤️' : '🤍'}</div>
-                        <div>{t('like')}</div>
+                        <div onClick={handleLike} style={{ cursor: 'pointer' }}>{t('like')} &nbsp; &nbsp; </div>
+
                         <div onClick={handleCommentToggle} style={{ cursor: 'pointer' }} > ✏️</div>
-                        <div>{t('comment')}</div>
+                        <div onClick={handleCommentToggle} style={{ cursor: 'pointer' }}>{t('comment')}</div>
                     </div>
 
                     {isCommenting && ( // 댓글 창을 클릭하면 작성할 수 있도록 
@@ -207,7 +217,7 @@ const Detail = () => {
                         </form>
                     )}
                     <div className="comments-list">
-                        {postComments.map((comment) => (
+                        {comments.map((comment) => (
                             <div key={comment._id} className='detail-comment'>
                                 <Comment
                                     author={comment.author}

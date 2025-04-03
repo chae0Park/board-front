@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import './Top3.css';
 import { useTranslation } from 'react-i18next';
+import default_user from "../assets/image/user-1699635_1280.png";
 
 
 const Top3 = ({ post }) => {
@@ -21,7 +22,7 @@ const Top3 = ({ post }) => {
             <div className='detail' key={post.id}>
                 <div className='Top3-top'>
                     <div className='Top3-img-container'>
-                        <img className='Top3-img' src={post.profileImage} alt={post.author} />
+                        <img className='Top3-img' src={post.profileImage ? post.profileImage : default_user} alt={post.author} />
                     </div>
                     <div className='Top3-user-info'>
                         <div className='id'>{post.author}</div>

@@ -53,6 +53,11 @@ img {
     padding-left: 10px;
 }
 
+.language:hover, .language-container:hover{
+    cursor: pointer;
+}
+
+
 .language-container{
     display: flex;
 }

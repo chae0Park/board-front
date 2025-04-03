@@ -63,8 +63,11 @@ export const fetchPostById = createAsyncThunk('posts/fetchPostById', async (id) 
     console.log("Fetching Post with ID:", id); 
     try{
         await axios.get(`http://localhost:5000/api/posts/${id}/view`); //게시물 조회수 증가
-        const response = await axios.get(`http://localhost:5000/api/post/${id}`); //상세 게시물 조회
-        return response.data;
+        
+        const postResponse = await axios.get(`http://localhost:5000/api/post/${id}`); //상세 게시물 조회
+        const commentsResponse = await axios.get(`http://localhost:5000/api/comments/${id}`);
+        
+        return { post: postResponse.data, comments: commentsResponse.data };
     }catch(error){
         console.error('게시물 가져오기 오류:', error);
         throw error;
@@ -174,8 +177,9 @@ const postsSlice = createSlice({
             })
             // Fetch a single post by ID
             .addCase(fetchPostById.fulfilled, (state, action) => {
-                state.currentPost = action.payload;
-                console.log();
+                state.currentPost = action.payload.post;
+                state.comments = action.payload.comments;
+                console.log('Post:', state.currentPost, 'Comments:', state.comments);
             })
             //like reducer
             .addCase(likePost.fulfilled, (state, action) => {

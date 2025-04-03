@@ -2,7 +2,16 @@ import './Comment.css';
 import default_user from '../assets/image/user-1699635_1280.png';
 
 const Comment = ({author, profileImg, timestamp, content, flip }) => {
-
+    const formatter = new Intl.DateTimeFormat('ko-KR', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false // 24시간 형식으로 표시
+    });
+    const date = new Date(timestamp);
+    const createdAt = formatter.format(date);
 
     return(
        <div className="Comment">
@@ -11,7 +20,7 @@ const Comment = ({author, profileImg, timestamp, content, flip }) => {
                     <img className='comment-author-profileImg' src={profileImg || default_user } alt='unknown'></img>
                 </div>
                 <p>{author} | </p>
-                <p>{timestamp}</p>
+                <p>{createdAt}</p>
             </div>
             <div>{content}</div>
             {/* 여기 좋아요 기능도 넣을거임 */}

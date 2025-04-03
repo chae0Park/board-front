@@ -10,7 +10,8 @@ const userSchema = new mongoose.Schema(
         }, // 자동 증가 필드
         email: {
             type: String,
-            unique: true, required: true
+            unique: true, 
+            required: true
         },
         password: { 
             type: String, 
@@ -25,14 +26,11 @@ const userSchema = new mongoose.Schema(
             required: true  
         },
         address: { 
-            type: String
+            type: String,
+            required: true
         },
         addressDetail: { 
             type: String
-        },
-        agreedPersonal: { 
-            type: Boolean, 
-            default: false 
         },
         profileImage: { 
             type: String 

@@ -42,12 +42,6 @@
     border-radius: 100%;
 }
 
-.detail-container2{
-    overflow-y: auto;   /*스크롤이 가능하도록 설정*/
-    padding-right: 10px;  /*스크롤 바를 고려한 패딩 */
-    margin-bottom: 20px;  /* 댓글 리스트 밑에 여유 공간 추가 */
-}
-
 .detail-content{
     font-size: 22px;
     margin-bottom: 30px;
