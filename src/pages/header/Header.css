@@ -34,11 +34,45 @@
     top: 4%;
 }
 
+.search-bar-container{
+    display: flex;
+    align-items: center;
+}
+
+.search-option{
+    border: none;
+    border-radius: 20px;
+    background-color: rgb(216, 222, 226);
+    height: 1.7rem;
+    line-height: 1.7rem;
+    text-align: center;
+}
+
+.search-bar{
+    border: none;
+    border-bottom: 2px solid rgb(216, 222, 226);
+    max-width: 18rem;
+    padding-left: 1rem;
+    font-size: 15px;
+    outline: none;
+    height: 1.4rem;
+    line-height: 1.4rem;
+}
+
+.search-button{
+    background-color: rgb(179, 211, 238);
+    border-radius: 20px;
+    border: none;
+    font-size: 15px;
+    padding: 3px 14px 7px 12px;
+}
+
+
 /*돋보기 아이콘*/
 .search-icon{
     width: 32px;
     height: 32px;
-    margin-right: 8px;
+    margin: 0 7px 0 17px;
     background-color: 100%;
 }
 

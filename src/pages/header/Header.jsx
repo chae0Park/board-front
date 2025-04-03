@@ -62,6 +62,12 @@ const Header = () => {
         setSearchValue('');
         setClickSearchIcon(false);
     };
+
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter') {
+            handleSearch();
+        }
+    };
     
 
     return(       
@@ -74,8 +80,8 @@ const Header = () => {
             
             <div className="header-container2">
                 {clickSearchIcon && (
-                    <div>
-                        <select value={searchOption} onChange={handleSearchOptionChange}>
+                    <div className='search-bar-container'>
+                        <select value={searchOption} onChange={handleSearchOptionChange} className='search-option'>
                             <option value="all">{t('all')}</option>
                             <option value="title">{t('title')}</option>
                             <option value="content">{t('content')}</option>
@@ -86,12 +92,17 @@ const Header = () => {
                             placeholder='search here' 
                             value={searchValue} 
                             onChange={handleSearchValueChange} 
+                            className='search-bar'
+                            onKeyDown={handleKeyDown}
                         />
                         <button 
                         type='button' 
                         onClick={handleSearch} 
+                        className='search-button'
                         style={{cursor:'pointer'}}
-                        >{t('search')}</button>
+                        >
+                            {t('search')}
+                        </button>
                     </div>
                 )}
                 <div className="search-icon" onClick={handleSearchBar} style={{cursor:'pointer'}}><img src={search} alt='search-icon'/></div>

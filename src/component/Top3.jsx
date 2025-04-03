@@ -13,6 +13,7 @@ const Top3 = ({ post }) => {
     }
 
     const commentCount = post.comments.length;
+    const previewTitle = getPreviewTitle(post.title);
     const previewText = getPreviewText(post.content);
     
     
@@ -31,7 +32,7 @@ const Top3 = ({ post }) => {
                 </div>
                 <div className='Top3-mid'>
                     <Link to={`/detail/${post._id}`} style={{ textDecoration: "none", color: "black" }}>
-                        <div className='Top3-mid-title'>{post.title}</div>
+                        <div className='Top3-mid-title'>{previewTitle}</div>
                         <div className='content'><span dangerouslySetInnerHTML={{ __html: previewText }} /></div>
                     </Link>
                 </div>
@@ -46,6 +47,10 @@ const Top3 = ({ post }) => {
     );
             
 }
+
+const getPreviewTitle = (title) => {
+    return title.length > 28 ? title.slice(0, 28) + '...' : title;
+};
 
 const getPreviewText = (content) => {
     const textOnly = content.replace(/<img[^>]*>/g, '');
