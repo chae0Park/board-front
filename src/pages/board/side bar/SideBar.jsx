@@ -12,7 +12,6 @@ const SideBar = () => {
     //다국어 처리 
     const { t } = useTranslation();
 
-
     useEffect(() => {
         if (frequencies.status !== 'succeeded') {
             dispatch(fetchSearchFrequencies());

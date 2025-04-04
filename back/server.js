@@ -416,9 +416,10 @@ app.get('/api/post', async (req, res) => {
 //필터링 작업이 더해진 게시물 조회
 app.get('/api/posts/search', async (req, res) => {
     console.log('포스트 서치 api 호출❤️');
-    try{const { query, option, userId, date } = req.query; 
+    try{
+        const { query, option, userId, date } = req.query; 
         const filters = {};
-    console.log('클라이언트에서 받은값', {query, option, userId, date});
+        console.log('클라이언트에서 받은값', {query, option, userId, date});
 
         if (query) {
             //검색어의 빈도수 증가
@@ -430,8 +431,10 @@ app.get('/api/posts/search', async (req, res) => {
                 const newFreq = new SearchFrequency({term: query, count: 1});
                 await newFreq.save();
             }
+            
 
             const regexFilter = { $regex: query, $options: 'i' }; 
+            //검색어에 따라 필터링
 
             if (option === 'all') {
                 filters.$or = [

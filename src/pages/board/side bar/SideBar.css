@@ -1,14 +1,15 @@
 .SideBar{
-    width: 22vw;
-    height: 45vh;   
+    max-width: 22vw;
+    height: 40vh;   
     background-color: white;
     border-radius: 5px;
     box-shadow: 0 0 8px rgb(204, 204, 204);
+    padding: 0 0.5rem;
     
 
     /**/
     position: relative;
-    right: 45px;
+    right: 38px;
     top:68px;
     
 }
@@ -21,15 +22,11 @@
     margin: 10px 0 10px;
 }
 
-/* .SideBar-icon-container{
-    display: flex;
-    justify-content: center;
-} */
-
 .SideBar-icon-container {
     display: grid;
     grid-template-columns: repeat(3, 1fr); /* 1fr: 3개의 동일한 너비로 나누기 */
     gap: 10px;  /* 아이콘 간의 간격 */
+    row-gap: 17px;
 }
 
 .SideBar-icon-container .icon {
