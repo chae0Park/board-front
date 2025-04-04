@@ -83,6 +83,7 @@ export const likePost = createAsyncThunk('posts/likePost', async (id, { getState
         headers: {
             Authorization: `Bearer ${token}`, // 인증 토큰을 헤더에 포함
         },
+        withCredentials: true,
     };
 
     try {

@@ -242,29 +242,6 @@ const authenticateToken = async (req, res, next) => {
 };
 
 
-// const authenticateToken = (req, res, next) => {
-//     const token = req.headers['authorization']?.split(' ')[1];
-//     if (!token) return res.status(401).json({ message: 'Access denied' });
-
-//     try {//토큰검증: 클라이언트가 보낸 JWT의 유효성 확인 - 시크릿코드 서명확인해서 변조 유무 체크
-//         // const user = jwt.verify(token, jwtSecret);
-//         jwt.verify(token, jwtSecret, (err, user) => {
-//             if (err) {
-//                 // 만료된 토큰인 경우
-//                 if (err.name === 'TokenExpiredError') {
-//                     return res.status(401).json({ message: 'Token expired' });
-//                 }
-//                 return res.status(403).json({ message: 'Invalid token' });
-//             }
-//         req.user = user;
-//         next();
-//         });
-//     } catch (error) {
-//         console.error('authenticateToken-Token validation error:', error);
-//         res.status(403).json({ message: 'Invalid token' });
-//     }
-// };
-
 
 // User Profile Route (GET)
 app.get('/api/users/:id', authenticateToken, async (req, res) => {
@@ -548,7 +525,7 @@ app.get('/api/posts/:id/view', async (req, res) => {
 });
 
 
-//좋아요 - 로그인 한 유저만 가능, 유저 당 게시물 한개만 좋아요 가능
+//좋아요
 app.post('/api/posts/:id/like', authenticateToken, async (req, res) => {
     console.log('좋아요 api콜 요청! :', req.params.id);
     const { id } = req.params;

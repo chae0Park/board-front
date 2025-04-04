@@ -84,11 +84,8 @@ img {
 .language{
     font-size: 13px;
     font-weight: bold;
-    padding-left: 10px;
-}
-
-.language:hover, .language-container:hover{
-    cursor: pointer;
+    padding: 10px;
+    text-align: center;
 }
 
 
@@ -109,8 +106,6 @@ img {
       }
 
 }
-
-
 
 
 .login-btn {

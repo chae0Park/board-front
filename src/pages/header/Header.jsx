@@ -69,7 +69,6 @@ const Header = () => {
         }
     };
     
-
     return(       
         <div className="Header">
 
@@ -110,19 +109,19 @@ const Header = () => {
                 
                 {user ? (
                     <>
-                        <Link to={'/'} 
-                        style={{ textDecoration: "none", color: "black"}}
+                        <Link to={'/'}
+                            style={{ textDecoration: "none", color: "black" }}
                         >
-                        <button onClick={handleLogout} className='logout-btn'>
-                            {t('logout')}
-                        </button>
+                            <button onClick={handleLogout} className='logout-btn'>
+                                {t('logout')}
+                            </button>
                         </Link>
-                        <Link to={'/mypage'} 
-                        style={{ textDecoration: "none", color: "black"}}
+                        <Link to={'/mypage'}
+                            style={{ textDecoration: "none", color: "black" }}
                         >
-                        <button className='mypage-btn'>
-                            {t('mypage')}
-                        </button>
+                            <button className='mypage-btn'> 
+                                {t('mypage')}
+                            </button>
                         </Link>
                     </>
                 ) : (
@@ -137,7 +136,7 @@ const Header = () => {
                     </>
                 )}
                 <div>
-                    <p className='language' onClick={handleLangBar}>language</p>
+                    <div className='language' onClick={handleLangBar}>language</div>
                     {openLanguage === true && (
                         <div className='language-container'>
                             <p className='lang-kor' onClick={() => changeLanguage('ko')}><img src={korea} alt='korea'/></p>
