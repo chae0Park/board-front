@@ -66,11 +66,6 @@ mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTop
     .then(() => { console.log('MAtlas connected 👏')})
     .catch(err => console.error('⚠️MongoDB connection error:', err));
 
-//루트 라우트 추가 
-app.get('/', (req, res) => {
-    res.send('API is running');
-});
-
 
 // Register Route - http://localhost:5000/api/register
 app.post('/api/register', async (req, res) => {
@@ -707,7 +702,10 @@ app.get('/api/comments/:postId', async (req, res) => {
 });
 
 
-
+//루트 라우트 추가 
+app.get('/', (req, res) => {
+    res.send('API is running');
+});
 
 
 app.listen(PORT, () => {
