@@ -18,10 +18,20 @@ const { upload, uploadToS3 } = require('./middleware/aws-upload');
 // const generateMockData = require('./generateMockData');
 
 //Middleware setup
-app.use(cors({
-    origin: 'http://localhost:3000',  // 클라이언트의 URL
-    credentials: true  // 쿠키를 허용하려면 credentials 옵션을 true로 설정
-}));
+//기존
+// app.use(cors({
+//     origin: 'http://localhost:3000',  // 클라이언트의 URL
+//     credentials: true  // 쿠키를 허용하려면 credentials 옵션을 true로 설정
+// }));
+//수정 
+const corsOptions = {
+    origin: 'https://mern-board.vercel.app',  // Vercel 도메인만 허용
+    methods: 'GET,POST,PUT,DELETE',           // 허용할 HTTP 메소드
+    allowedHeaders: 'Content-Type,Authorization', // 허용할 헤더
+	credentials: true  // 쿠키를 허용하려면 credentials 옵션을 true로 설정
+};
+app.use(cors(corsOptions));
+
 app.use(express.json());
 const cookieParser = require('cookie-parser');
 app.use(cookieParser());
@@ -62,6 +72,8 @@ app.use((req, res, next) => {
     // .catch(err => console.error('MongoDB connection error:', err));
 
 //MAtlas 연결
+console.log("MONGODB_URI:", process.env.MONGODB_URI);
+
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => { console.log('MAtlas connected 👏')})
     .catch(err => console.error('⚠️MongoDB connection error:', err));
