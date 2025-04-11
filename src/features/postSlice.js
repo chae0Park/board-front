@@ -96,28 +96,35 @@ export const likePost = createAsyncThunk('posts/likePost', async (id, { getState
 });
 
 
-// 게시글 작성 
+// 게시글 작성 - 
 export const addPost = createAsyncThunk('posts/addPost', async (formData) => {
-    //get the token from sessionStroage
+    console.log('addPost 액션 생성자 호출'); 
     const token = sessionStorage.getItem('token');
 
-    //make the post request, attaching the token to the Authorization header
+    for (let pair of formData.entries()) {
+        console.log('addPost 호출, formData:',pair[0] + ': ' + pair[1]);
+    }
+   
     const response = await axios.post('http://localhost:5000/api/post', formData, {
         headers: { 
+            'Authorization': `Bearer ${token}`, 
             'Content-Type': 'multipart/form-data',
-            'Authorization': `Bearer ${token}`, // Attach the token 
         },
         withCredentials: true,
     });
     return response.data;
 
-    
 });
 
 
 // 게시글 수정
 export const updatePost = createAsyncThunk('posts/updatePost', async ({ id, formData }, thunkAPI) => {
-    console.log('updatePost 호출, post id:', id); // 값 확인
+    console.log('updatePost 호출, post id:', id); // 값 확인 - 잘 나옴
+
+    for (let pair of formData.entries()) {
+        console.log('게시글 수정, formData:',pair[0] + ': ' + pair[1]);
+    }
+
     try {
         const response = await axios.put(`http://localhost:5000/api/post/${id}`, formData, {
             headers: {

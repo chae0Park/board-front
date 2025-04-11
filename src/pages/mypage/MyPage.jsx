@@ -70,14 +70,12 @@ const MyPage = () => {
                         src={user.profileImage || default_user } 
                         alt="Profile" 
                         onClick={handleProfileClick} 
-
                         style={{ width: '100px', height: '100px', borderRadius: '100%', cursor: 'pointer'  }} 
                     />
                 </div>
                 <div>
                     <h4 className='MyPage-nickname'>welcome, {user.nickname}</h4>
                     <p className='MyPage-email'>{user.email}</p>
-                    {/* <p>{user.id}</p> */}
                 </div>
                 <div className='MyPage-navbar'>
                     <p 
@@ -105,6 +103,7 @@ const MyPage = () => {
             {/* 프로필 이미지 업데이트  */}
             <input 
                 type="file" 
+                name="file"
                 accept="image/*" ref={fileInputRef} 
                 onChange={handleFileChange} 
                 style={{ display: 'none' }} // input 요소 숨기기

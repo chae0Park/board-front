@@ -83,15 +83,18 @@ export const loginUser = (formData) => async (dispatch) => {
 }
 
 export const fetchUserProfile = (userId) => async (dispatch, getState) => {
+    console.log('fetchUserProfile 생성자 호출!'); 
     try {
         const { token } = getState().auth; // 인증 토큰 가져오기
+        console.log('fetchUserProfile에서 가져온 토큰:', token); // 토큰 확인
         const config = {
             headers: {
                 'Authorization': `Bearer ${token}`, // 인증 토큰을 헤더에 포함
             },
+            withCredentials: true,
         };
-
         const response = await axios.get(`http://localhost:5000/api/users/${userId}`, config);
+        console.log('fetchUserProfile 응답:', response.data); // 응답 데이터 확인
         dispatch(setUserProfile(response.data.user)); 
     } catch (error) {
         console.error('Error fetching user profile:', error);
@@ -121,9 +124,10 @@ export const logoutUser = () => async (dispatch, getState) => {
 
 // 프로필 사진 업로드 액션
 export const uploadProfileImage = (imageFile, userId) => async (dispatch, getState) => {
+    console.log('uploadProfileImage 생성자 호출!', imageFile); 
     try {
         const formData = new FormData();
-        formData.append('profileImage', imageFile); // 업로드할 이미지 파일
+        formData.append('file', imageFile); // 업로드할 이미지 파일
 
         const { token } = getState().auth; // 인증 토큰 가져오기
         const config = {

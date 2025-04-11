@@ -55,7 +55,10 @@
     "nickname included only string and int": "Nickname can only include letters and numbers.",
     "nickname required": "Nickname is required.",
     "phone required": "Phone number is required.",
-    "address1 required": "Address is required."
+    "address1 required": "Address is required.",
+    "post-edit success alert" : "The post has been successfully updated.",
+    "post-edit error alert" : "An error occurred while updating the post.",
+    "enter a title" : "Please enter a title."
 
 
 

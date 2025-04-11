@@ -13,7 +13,8 @@ const User = require('./model/User'); // User 모델 임포트
 const Post = require('./model/Post'); // Post 모델 임포트 
 const Comment = require('./model/Comment');// Comment 모델 임포트
 const SearchFrequency = require('./model/SearchFrequency');
-const upload = require('./middleware/upload');
+// const upload = require('./middleware/upload');
+const { upload, uploadToS3 } = require('./middleware/aws-upload');
 // const generateMockData = require('./generateMockData');
 
 //Middleware setup
@@ -46,19 +47,30 @@ app.use((req, res, next) => {
 });
 
 // 서버에서 uploads 폴더를 정적으로 제공 - 클라이언트가 접근하여 파일을 가져올 수 있도록 함 
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // MongoDB 연결
-mongoose.connect('mongodb://localhost:27017/your_db_name', 
-    { useNewUrlParser: true, useUnifiedTopology: true })
-    .then(() => {
-        console.log('MongoDB connected');
+// mongoose.connect('mongodb://localhost:27017/your_db_name', 
+//     { useNewUrlParser: true, useUnifiedTopology: true })
+//     .then(() => {
+//         console.log('MongoDB connected');
 
         // generateMockData()
         //     .then(() => console.log('Mock data generation completed'))
         //     .catch(err => console.error('Error generating mock data:', err));
-    })
-    .catch(err => console.error('MongoDB connection error:', err));
+    // })
+    // .catch(err => console.error('MongoDB connection error:', err));
+
+//MAtlas 연결
+mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => { console.log('MAtlas connected 👏')})
+    .catch(err => console.error('⚠️MongoDB connection error:', err));
+
+//루트 라우트 추가 
+app.get('/', (req, res) => {
+    res.send('API is running');
+});
+
 
 // Register Route - http://localhost:5000/api/register
 app.post('/api/register', async (req, res) => {
@@ -137,7 +149,7 @@ app.post('/api/login', async (req, res) => {
             profileImage: user.profileImage 
         }, 
         process.env.JWT_SECRET, 
-        { expiresIn: '5m' }  // 1시간 후 만료
+        { expiresIn: '1h' }  // 1시간 후 만료
     );
     console.log("로그인 할 때 만든 accessToken", accessToken);
 
@@ -261,28 +273,29 @@ app.get('/api/users/:id', authenticateToken, async (req, res) => {
 
 
 
-app.put('/api/users/:id', authenticateToken, upload.single('profileImage'), async (req, res) => {
+app.put('/api/users/:id', authenticateToken, upload, uploadToS3, async (req, res) => {
+    console.log('👩‍💻PUT /api/users/:id 호출됨');
+    console.log('👩‍💻file', req.files[0].s3Url);
     const userId = req.user.id; 
-    const newProfileImage = req.file ? `/uploads/${req.file.filename}` : null; // 업로드된 파일이 있으면 경로 설정
-
+    const newProfileImage = req.files[0] ? req.files[0].s3Url : null; // s3Url은 uploadToS3 미들웨어에서 s3에 업로드한 후 설정한 url
+    
     try {
-
         const existingUser = await User.findById(userId); // then과 마찬가지로 이 Promise객체가 결과 값을 생성해서 반환할 때 까지 코드 멈춤 
         if(!existingUser){
             return res.status(200).json({message: '그런유저 없는데용..'});
         }
-        //반대로 있을 때
+        
         const updatedUser = await User.findByIdAndUpdate( // 여기적힌 코드를 실행햇 Promise 객체에 결과 담기전까지 await-> 딴짓금지
             userId,// 이걸로 찾고 
             { profileImage: newProfileImage }, // 업데이트할 필드
             { new: true } // 업데이트 후 새 문서 반환
         );
-        //update된 유저가 없을 때 
+         
         if (!updatedUser) {
             return res.status(404).json({ message: 'User not found' });
         }
 
-    console.log('Updated user:', updatedUser); // 추가
+    console.log('Updated user:', updatedUser); 
     res.status(200).json({ message: 'Profile image updated successfully', profileImage: updatedUser.profileImage });
     } catch (error) {
         console.error('Error in PUT route:', error); // 수정
@@ -303,16 +316,21 @@ app.post('/api/logout', authenticateToken, (req, res) => {
 
 //post method==================================================================
 
-app.post('/api/post',authenticateToken, upload.array('files', 5), async (req, res) => {
+app.post('/api/post',authenticateToken, upload, async (req, res) => { //upload, uploadToS3, 
     try {
+        console.log('👩‍💻POST /api/post 호출됨');
+        console.log('👩‍💻POST /api/post req.body', req.body);
         const userId = req.user.id; 
-
         const { title, content } = req.body;
-        const filePaths = req.files.map(file => `/uploads/${file.filename}`);
+        console.log('post작성 title:', title, 'post 작성 content', content);
+        if(!title || !content) {
+            console.log('title, content 둘 다 없음');
+        }
+        // const filePaths = req.files.map(file => file.s3Url);
 
         //user의 최신 프로필 사진 반영
-        const user = await User.findById(userId); // userId를 사용하여 현재 유저 정보를 조회
-        const profileImage = user.profileImage; // 최신 프로필 이미지를 가져오기
+        const user = await User.findById(userId); 
+        const profileImage = user.profileImage; 
 
         // Create a new post with the logged-in user's nickname and file paths
         const newPost = new Post({
@@ -322,7 +340,7 @@ app.post('/api/post',authenticateToken, upload.array('files', 5), async (req, re
             profileImage: profileImage, // 최신 프로필 이미지 사용
             userId, // Include userId
             createdAt: Date.now(),
-            files: filePaths, // Store file paths in the post
+            // files: filePaths, // Store file paths in the post
             comments: [] // 빈 배열로 초기화
         });
 
@@ -337,6 +355,42 @@ app.post('/api/post',authenticateToken, upload.array('files', 5), async (req, re
         res.status(500).json({ error: 'Failed to create post' });
     }
 });
+
+
+//게시글 수정
+app.put('/api/post/:id', upload, async (req, res) => {
+
+    const { id } = req.params;
+    const { title, content } = req.body;
+
+  try {
+        const updatedData = { title, content, updatedAt: new Date() }; //files,
+        const updatedPost = await Post.findByIdAndUpdate(
+            id,
+            { $set: updatedData }, 
+            { new: true }
+        );
+
+        if (!updatedPost) return res.status(404).json({ message: '게시글을 찾을 수 없음.' });
+        res.json(updatedPost);
+    } catch (error) {
+        console.error('게시글 수정 중 오류 발생:', error); 
+        res.status(500).json({ message: '게시글 수정 중 오류 발생.' });
+    }
+});
+
+
+//react-quill의 이미지를 base64 에서 url로 반환하여 응답 
+app.post('/upload-image', upload, uploadToS3, (req, res) => {
+    if (!req.files) {
+      return res.status(400).json({ message: '파일을 업로드 해주세요.' });
+    }
+  
+    console.log('aws에 저장된 이미지', req.files);
+    // const imgUrl = `/uploads/${req.file.filename}`; 
+    // res.json({ imgUrl }); 
+});
+
 
 //전체 posts데이터 불러오기 - 주간 3 게시물을 불러오긴 위한 api
 app.get('/api/posts/all', async (req, res) => {
@@ -392,7 +446,6 @@ app.get('/api/post', async (req, res) => {
 
 //필터링 작업이 더해진 게시물 조회
 app.get('/api/posts/search', async (req, res) => {
-    console.log('포스트 서치 api 호출❤️');
     try{
         const { query, option, userId, date } = req.query; 
         const filters = {};
@@ -558,28 +611,6 @@ app.post('/api/posts/:id/like', authenticateToken, async (req, res) => {
 
 
 
-
-//게시글 수정
-app.put('/api/post/:id', upload.array('files', 5), async (req, res) => {
-    const { id } = req.params;
-    const { title, content } = req.body;
-    const files = req.files ? req.files.map(file => `/uploads/${file.filename}`) : [];
-
-  try {
-        const updatedData = { title, content, files, updatedAt: new Date() };
-        const updatedPost = await Post.findByIdAndUpdate(
-            id,
-            { $set: updatedData }, 
-            { new: true }
-        );
-
-        if (!updatedPost) return res.status(404).json({ message: '게시글을 찾을 수 없음.' });
-        res.json(updatedPost);
-    } catch (error) {
-        console.error('게시글 수정 중 오류 발생:', error); 
-        res.status(500).json({ message: '게시글 수정 중 오류 발생.' });
-    }
-});
 
 // 게시글 삭제
 app.delete('/api/post/:id', async (req, res) => {

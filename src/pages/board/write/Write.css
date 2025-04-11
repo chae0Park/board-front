@@ -2,11 +2,8 @@
 .Write{
     width: 70vw;
     height: 100vh;
-    /* border: 1px solid black; */
     position: relative;
     left: 14%;
-    /* top: 8px; */
-
     padding: 20px;
     margin-bottom: 20px;
 }
@@ -45,41 +42,24 @@
 }
 
 .write-title-inputbox{
-    font-size: 40px;
+    font-size: 38px;
     width: 67vw;
-    border: none;
-    /* border-bottom: solid #aaaaaa 1px; */
+    border:none;
     outline: none;
-}
-
-.write-detail-container1{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 30px;
-
-    padding-right: 20px;
-
-    /* border: 1px solid black; */
-    
-}
-
-.w-detail-author-profile, .w-detail-author-id{
-    margin-right: 5px;
+    padding-left: 1rem;
 }
 
 .write-detail-author-info{
-    /* border: 1px solid black; */
-    
+    max-width: 7.5rem;
     display: flex;
+    justify-content: space-between;
     align-items: center;
+    margin-left: 0.5rem;
 }
 
 .w-detail-author-profile{
-    width: 30px;
-    height: 30px;
-    
-    
+    width: 40px;
+    height: 40px;
 }
 
 .w-profileImg{
@@ -88,12 +68,14 @@
     border-radius: 100%;
 }
 
-/* .detail-divide{
-    width: 70vw;
-    height: 1px;
-    background-color: gray;
-    margin-bottom: 44px;
-} */
+.w-detail-author-id{
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.w-detail-author-date{
+    font-size: 15px;
+}
 
 
 .detail-container2{
@@ -125,7 +107,3 @@
 
 }
 
-.w-detail-author-date{
-    margin-left: 43px;
-    padding-top: 17px;
-}

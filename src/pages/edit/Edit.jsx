@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Footer from '../board/footer/Footer';
 import './Edit.css';
@@ -6,7 +6,8 @@ import { updatePost,fetchPostById } from '../../features/postSlice';
 import default_user from '../../assets/image/user-1699635_1280.png';
 import { useNavigate, useParams } from 'react-router-dom';
 import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css'; // 스타일 import
+import 'react-quill/dist/quill.snow.css'; 
+import { useTranslation } from 'react-i18next';
 
 
 
@@ -15,6 +16,7 @@ const Edit = () => {
     const dispatch = useDispatch();
     const { user } = useSelector(state => state.auth); 
     const post = useSelector((state) => state.posts.currentPost);
+    const quillRef = useRef(null);
     //게시물의 id가져옴 
     const { id } = useParams();
     //게시물 내용을 저장함 
@@ -22,6 +24,7 @@ const Edit = () => {
     const [content, setContent] = useState('');
     //const [files, setFiles] = useState([]);
     const navigate = useNavigate();
+    const { t } = useTranslation();
     
     //수정 이전에 올라간 멀티파일 삭제하기 
     //const [deleteFiles, setDeleteFiles] = useState([]);
@@ -51,14 +54,14 @@ const Edit = () => {
 
         dispatch(updatePost({ id, formData })) 
             .then(() => {
-                alert('게시글이 수정되었습니다.');
+                alert(t('post-edit success alert'));
                 return dispatch(fetchPostById(id));
             })
             .then(() => {
                 navigate(`/detail/${id}`);
             })
             .catch((error) => {
-                console.error('게시글 수정 중 오류 발생:', error);
+                console.error(t('post-edit error alert'), error);
             });
     };
 
@@ -71,7 +74,7 @@ const Edit = () => {
                         
                             <input type='text' 
                                 className='Edit-title-inputbox'
-                                placeholder='제목을 입력해주세요'
+                                placeholder={t('enter a title')}
                                 value={title}
                                 onChange={(e) => setTitle(e.target.value)}
                                 /> 
@@ -79,7 +82,8 @@ const Edit = () => {
                             <div className='detail-divide'></div>  
                                 
                             {/* WYSIWYG 에디터 */}
-                            <ReactQuill                                
+                            <ReactQuill    
+                                ref={quillRef}                            
                                 className="custom-quill"
                                 style={{ position : "relative", top : "50px", height : "400px"}}
                                 value={content}

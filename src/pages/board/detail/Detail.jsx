@@ -1,11 +1,11 @@
 import './Detail.css';
 import { useNavigate, useParams, Link } from 'react-router-dom';
-import { fetchPosts, fetchPostById, deletePost, likePost  } from '../../../features/postSlice';
+import { fetchPosts, fetchPostById, deletePost, likePost } from '../../../features/postSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { useState, useEffect } from 'react';
 import Comment from '../../../component/Comment';
 import Reply from '../../../component/Reply';
-import { addComment } from '../../../features/commentSlice'; 
+import { addComment } from '../../../features/commentSlice';
 import { useTranslation } from 'react-i18next';
 import default_user from '../../../assets/image/user-1699635_1280.png';
 
@@ -20,7 +20,7 @@ const Detail = () => {
     const post = useSelector((state) => state.posts.currentPost);
     const currentUser = useSelector((state) => state.auth.user);
     const comments = useSelector((state) => state.posts.comments);
-    
+
     const [loading, setLoading] = useState(true);
     const [likeActive, setLikeActive] = useState(false);
 
@@ -30,11 +30,11 @@ const Detail = () => {
     const [replyInputs, setReplyInputs] = useState({});
     const [showReplyInput, setShowReplyInput] = useState({}); // 각 댓글에 대한 토글 상태
 
-   //다국어 처리 
+    //다국어 처리 
     const { t } = useTranslation();
 
     useEffect(() => {
-        const fetchPostData = async() => {
+        const fetchPostData = async () => {
             setLoading(true); // 데이터 로딩 시작
             dispatch(fetchPostById(id));
             setLoading(false); // 데이터 로딩 완료
@@ -47,23 +47,23 @@ const Detail = () => {
     useEffect(() => {
         dispatch(fetchPosts()); // 페이지에 맞는 게시물 가져오기
     }, [dispatch]);
- 
+
 
     // 삭제
-    const handleDelete =  (id) => {
-        if (window.confirm(t('delete-confirm'))){
+    const handleDelete = (id) => {
+        if (window.confirm(t('delete-confirm'))) {
             dispatch(deletePost(id))
                 .then(() => {
                     alert(t('delete-msg'));
                     navigate('/');  // 게시물이 남아 있으면 목록 페이지로 이동
-                    
+
                 })
                 .catch((error) => {
                     console.error('게시글 삭제 중 오류 발생:', error);
                     alert(t('delete-err-msg'));
                 });
         }
-        
+
     };
 
     //like
@@ -116,18 +116,18 @@ const Detail = () => {
         }
         const content = parentId ? replyInputs[parentId] : commentInput;
 
-        if(content.trim()){
+        if (content.trim()) {
             await dispatch(addComment(post._id, content, parentId));
             await dispatch(fetchPostById(post._id));
-            if(parentId){
-                setReplyInputs((prev) => ({...prev, [parentId]: '' })); //대댓글 입력 필드 초기화
-                 // 대댓글 작성 후 댓글 목록을 다시 가져오기
+            if (parentId) {
+                setReplyInputs((prev) => ({ ...prev, [parentId]: '' })); //대댓글 입력 필드 초기화
+                // 대댓글 작성 후 댓글 목록을 다시 가져오기
                 setShowReplyInput(prev => !prev);
-            } else{
+            } else {
                 setCommentInput('');
                 setIsCommenting(false);
             }
-                
+
         }
     };
 
@@ -138,64 +138,66 @@ const Detail = () => {
             [commentId]: value,
         }));
     };
-    
-     // 특정 포스트의 댓글만 필터링
-     // ? const postComments = comments.filter(comment => comment.postId === post._id);
-    
+
+    // 특정 포스트의 댓글만 필터링
+    // ? const postComments = comments.filter(comment => comment.postId === post._id);
+
     if (loading) {
         return <p className="spinner">Loading...</p>; // 로딩 중 표시
     }
-    
+
 
     if (!post) {
         return <p>{t('find no post')}</p>;
     }
 
-    return(
+    return (
         <div>
             <div className='Detail'>
                 <div className='detail-title'>{post.title}</div>
 
                 <div className='detail-container1'>
                     <div className='detail-author-info'>
-                        <div className='detail-author-profile'><img className='detail-profileImg' src={post.profileImage ? post.profileImage : default_user} alt={post.author} /></div>
-                        <div className='detail-author-id'>{post.author} |</div>
-                        
-                        {post.updatedAt ? (
-                        <div className='detail-modified-date'>
-                            edited: {new Date(post.updatedAt).toLocaleDateString('en-US', {
-                                year: 'numeric',
-                                month: 'short', // 월을 약어로 표시
-                                day: '2-digit'
-                            })}
+                        <div className='detail-author-profile'>
+                            <img className='detail-profileImg' src={post.profileImage ? post.profileImage : default_user} alt={post.author} />
                         </div>
+                        <div className='detail-author-id'>{post.author} |</div>
+
+                        {post.updatedAt ? (
+                            <div className='detail-modified-date'>
+                                edited: {new Date(post.updatedAt).toLocaleDateString('en-US', {
+                                    year: 'numeric',
+                                    month: 'short', // 월을 약어로 표시
+                                    day: '2-digit'
+                                })}
+                            </div>
                         ) : (
                             <div className='detail-author-date'>
-                            posted: {new Date(post.createdAt).toLocaleDateString('en-US', {
-                                year: 'numeric',
-                                month: 'short', // 월을 약어로 표시
-                                day: '2-digit'
-                            })}
-                        </div>
+                                posted: {new Date(post.createdAt).toLocaleDateString('en-US', {
+                                    year: 'numeric',
+                                    month: 'short', // 월을 약어로 표시
+                                    day: '2-digit'
+                                })}
+                            </div>
                         )}
                     </div>
-                    
+
                     <div className='detail-eidt-delete'>{/* 수정 | 삭제 */}
-                    {currentUser && currentUser.nickname === post.author && ( // 수정 및 삭제 버튼 조건부 표시
-                        <>
-                            <Link to={`/edit/${post._id}`}><button className='detail_edit_btn'>edit</button></Link>
-                            <button className='detail_delete_btn' onClick={() => {handleDelete(post._id)}}>delete</button>
-                        </>
-                    )}    
+                        {currentUser && currentUser.nickname === post.author && ( // 수정 및 삭제 버튼 조건부 표시
+                            <>
+                                <Link to={`/edit/${post._id}`}><button className='detail_edit_btn'>edit</button></Link>
+                                <button className='detail_delete_btn' onClick={() => { handleDelete(post._id) }}>delete</button>
+                            </>
+                        )}
                     </div>
-                </div> 
-                    
+                </div>
+
                 <div className='detail-container2'>
                     <div className='detail-content'>
-                         {/* 마크다운이나 HTML을 처리할 수 있는 방법을 통해 변환된 내용을 렌더링 */}
-                         <div dangerouslySetInnerHTML={{ __html: post.content }} />                        
+                        {/* 마크다운이나 HTML을 처리할 수 있는 방법을 통해 변환된 내용을 렌더링 */}
+                        <div dangerouslySetInnerHTML={{ __html: post.content }} />
                     </div>
-                    
+
                     <div className='detail-like-comment'>
                         <div onClick={handleLike} style={{ cursor: 'pointer' }}>{likeActive ? '❤️' : '🤍'}</div>
                         <div onClick={handleLike} style={{ cursor: 'pointer' }}>{t('like')} &nbsp; &nbsp; </div>
@@ -231,7 +233,7 @@ const Detail = () => {
                                         <form onSubmit={(e) => handleCommentSubmit(e, comment._id)}>
                                             <input
                                                 value={replyInputs[comment._id] || ''}
-                                                onChange={(e) => handleReplyInputChange( comment._id, e.target.value)}
+                                                onChange={(e) => handleReplyInputChange(comment._id, e.target.value)}
                                                 placeholder={t('reply here')}
                                                 className='replyInputbox'
                                             />
@@ -240,7 +242,7 @@ const Detail = () => {
                                     </div>
 
                                 )}
-                                
+
                                 {comment.replies && comment.replies.length > 0 && (
                                     <div className='replies_in_detail'>
                                         {comment.replies.map(reply => (
@@ -257,13 +259,13 @@ const Detail = () => {
                                 )}
                             </div>
                         ))}
-                    </div>    
+                    </div>
                 </div>
             </div>
         </div>
-            
-            
-    )       
+
+
+    )
 }
 
 export default Detail;
