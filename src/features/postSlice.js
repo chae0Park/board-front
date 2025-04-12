@@ -21,7 +21,7 @@ const initialState = {
 export const fetchAllPosts = createAsyncThunk('posts/fetchAllPosts', async () => {
     console.log("API_URL:", process.env.API_URL);
     console.log('fetchAllPost호출');
-    const response = await axios.get(`${process.env.API_URL}api/posts/all`);
+    const response = await axios.get('http://localhost:5000/api/posts/all');
     console.log(", allPosts는?",response);
     return response.data; // 모든 게시글 반환
 });
