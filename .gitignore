@@ -23,3 +23,5 @@ yarn-error.log*
 
 #.env
 .envback/.env
+
+.vercel
