@@ -25,7 +25,7 @@ const { upload, uploadToS3 } = require('./middleware/aws-upload');
 // }));
 //수정 
 const corsOptions = {
-    origin: 'https://mern-board.vercel.app',  // Vercel 도메인만 허용
+    origin: 'https://mern-board-rept1xr1t-chaes-projects-44f41a54.vercel.app',  // Vercel 도메인만 허용
     methods: 'GET,POST,PUT,DELETE',           // 허용할 HTTP 메소드
     allowedHeaders: 'Content-Type,Authorization', // 허용할 헤더
 	credentials: true  // 쿠키를 허용하려면 credentials 옵션을 true로 설정
