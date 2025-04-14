@@ -55,7 +55,7 @@ export const { loginSuccess, logoutSuccess, setUserProfile, profileImageUploadSu
 export const registerUser = (formData) => async (dispatch) => {
     try {
         // 중복 체크를 위해 동일한 API를 호출
-        const response = await axios.post('http://localhost:5000/api/register', formData); // 비동기 요청을 하고
+        const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/register`, formData); // 비동기 요청을 하고
         alert('Registration successful!');
 
         
@@ -72,7 +72,7 @@ export const registerUser = (formData) => async (dispatch) => {
 
 export const loginUser = (formData) => async (dispatch) => {
     try{
-        const response = await axios.post('http://localhost:5000/api/login', formData , {
+        const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/login`, formData , {
             withCredentials: true  // 쿠키를 포함한 요청을 보냄
         });
         dispatch(loginSuccess(response.data));
@@ -93,7 +93,7 @@ export const fetchUserProfile = (userId) => async (dispatch, getState) => {
             },
             withCredentials: true,
         };
-        const response = await axios.get(`http://localhost:5000/api/users/${userId}`, config);
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/users/${userId}`, config);
         console.log('fetchUserProfile 응답:', response.data); // 응답 데이터 확인
         dispatch(setUserProfile(response.data.user)); 
     } catch (error) {
@@ -114,7 +114,7 @@ export const logoutUser = () => async (dispatch, getState) => {
     };
 
     try {
-        await axios.post('http://localhost:5000/api/logout', {}, config); // 빈 객체로 body를 보냄
+        await axios.post(`${process.env.REACT_APP_API_URL}/api/logout`, {}, config); // 빈 객체로 body를 보냄
         sessionStorage.removeItem('token');
         dispatch(logoutSuccess());
     } catch (error) {
@@ -138,7 +138,7 @@ export const uploadProfileImage = (imageFile, userId) => async (dispatch, getSta
             withCredentials: true,
         };
 
-        const response = await axios.put(`http://localhost:5000/api/users/${userId}`, formData, config);
+        const response = await axios.put(`${process.env.REACT_APP_API_URL}/api/users/${userId}`, formData, config);
         const newProfileImage = response.data.profileImage;
 
         dispatch(profileImageUploadSuccess({ profileImage: newProfileImage }));

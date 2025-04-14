@@ -40,7 +40,7 @@ export const addComment = (postId, content, parentId = null ) => async (dispatch
     const token = getState().auth.token; // 토큰을 스토어에서 가져옴
 
     try {
-        const response = await axios.post(`http://localhost:5000/api/comment/${postId}`, {
+        const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/comment/${postId}`, {
             content,
             parentId,
         }, {

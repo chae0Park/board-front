@@ -11,7 +11,7 @@ const initialState = {
 export const fetchSearchFrequencies = createAsyncThunk(
     'searchFrequency/fetchSearchFrequencies',
     async () => {
-        const response = await axios.get('http://localhost:5000/api/search-frequencies');
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/search-frequencies`);
         return response.data; // 리턴된 데이터는 action.payload로 사용됩니다
     }
 );

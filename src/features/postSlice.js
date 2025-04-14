@@ -21,7 +21,7 @@ const initialState = {
 export const fetchAllPosts = createAsyncThunk('posts/fetchAllPosts', async () => {
     console.log("API_URL:", process.env.API_URL);
     console.log('fetchAllPost호출');
-    const response = await axios.get('http://localhost:5000/api/posts/all');
+    const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/posts/all`);
     console.log(", allPosts는?",response);
     return response.data; // 모든 게시글 반환
 });
@@ -31,7 +31,7 @@ export const fetchAllPosts = createAsyncThunk('posts/fetchAllPosts', async () =>
 //게시글 리스트 + 페이징 처리 
 export const fetchPosts = createAsyncThunk('posts/fetchPosts', async ({ page, postsPerPage }) => {
     console.log('fetchPosts 호출:', { page, postsPerPage }); // 값 확인
-    const response = await axios.get(`http://localhost:5000/api/post?page=${page}&limit=${postsPerPage}`);
+    const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/post?page=${page}&limit=${postsPerPage}`);
     return response.data;
 });
 
@@ -40,7 +40,7 @@ export const fetchPosts = createAsyncThunk('posts/fetchPosts', async ({ page, po
 export const fetchMyPosts = createAsyncThunk(
     'posts/fetchMyPosts', // 자동으로 타입을 생성합니다
     async (userId) => {
-        const response = await axios.get(`http://localhost:5000/api/posts/search?userId=${userId}`);
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/posts/search?userId=${userId}`);
         return response.data; // 리턴한 값은 action.payload로 사용됩니다
     }
 );
@@ -50,7 +50,7 @@ export const fetchSearchedPosts = createAsyncThunk(
     'posts/fetchSearchedPosts', // 자동으로 타입을 생성합니다
     async ({searchTerm, searchOption}) => {
         console.log('검색 후 fetchSearchedPost가 호출되었습니다',)
-        const response = await axios.get(`http://localhost:5000/api/posts/search?query=${searchTerm}&option=${searchOption}`);
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/posts/search?query=${searchTerm}&option=${searchOption}`);
         console.log('fetchSearchedPosts  호출 후 응답 값',response)
         return response.data; // 리턴한 값은 action.payload로 사용됩니다
     }
@@ -63,10 +63,10 @@ export const fetchSearchedPosts = createAsyncThunk(
 export const fetchPostById = createAsyncThunk('posts/fetchPostById', async (id) => {
     console.log("Fetching Post with ID:", id); 
     try{
-        await axios.get(`http://localhost:5000/api/posts/${id}/view`); //게시물 조회수 증가
+        await axios.get(`${process.env.REACT_APP_API_URL}/api/posts/${id}/view`); //게시물 조회수 증가
         
-        const postResponse = await axios.get(`http://localhost:5000/api/post/${id}`); //상세 게시물 조회
-        const commentsResponse = await axios.get(`http://localhost:5000/api/comments/${id}`); // 게시물의 댓글 목록 조회
+        const postResponse = await axios.get(`${process.env.REACT_APP_API_URL}/api/post/${id}`); //상세 게시물 조회
+        const commentsResponse = await axios.get(`${process.env.REACT_APP_API_URL}/api/comments/${id}`); // 게시물의 댓글 목록 조회
         
         return { post: postResponse.data, comments: commentsResponse.data };
     }catch(error){
@@ -88,7 +88,7 @@ export const likePost = createAsyncThunk('posts/likePost', async (id, { getState
     };
 
     try {
-        const response = await axios.post(`http://localhost:5000/api/posts/${id}/like`, {}, config); // 빈 객체를 body로 전송
+        const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/posts/${id}/like`, {}, config); // 빈 객체를 body로 전송
         return response.data; // 좋아요 수 반환
     } catch (error) {
         console.error('좋아요 수 증가 중 오류 발생:', error);
@@ -106,7 +106,7 @@ export const addPost = createAsyncThunk('posts/addPost', async (formData) => {
         console.log('addPost 호출, formData:',pair[0] + ': ' + pair[1]);
     }
    
-    const response = await axios.post('http://localhost:5000/api/post', formData, {
+    const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/post`, formData, {
         headers: { 
             'Authorization': `Bearer ${token}`, 
             'Content-Type': 'multipart/form-data',
@@ -127,7 +127,7 @@ export const updatePost = createAsyncThunk('posts/updatePost', async ({ id, form
     }
 
     try {
-        const response = await axios.put(`http://localhost:5000/api/post/${id}`, formData, {
+        const response = await axios.put(`${process.env.REACT_APP_API_URL}/api/post/${id}`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',  // FormData를 전송할 때 이 헤더를 사용
             },
@@ -142,7 +142,7 @@ export const updatePost = createAsyncThunk('posts/updatePost', async ({ id, form
 
 // 게시글 삭제
 export const deletePost = createAsyncThunk('posts/deletePost', async (id) => {
-    await axios.delete(`http://localhost:5000/api/post/${id}`);
+    await axios.delete(`${process.env.REACT_APP_API_URL}/api/post/${id}`);
     return id;
 });
 
