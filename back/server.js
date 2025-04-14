@@ -7,7 +7,7 @@ const jwtSecret = process.env.JWT_SECRET;
 const cors = require('cors');
 const app = express();
 const path = require('path'); //로컬 서버 사용을 위해path 임포트
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 const mongoose = require('mongoose');
 const User = require('./model/User'); // User 모델 임포트
 const Post = require('./model/Post'); // Post 모델 임포트 
@@ -721,5 +721,5 @@ app.get('/', (req, res) => {
 
 
 app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+    console.log(`Server is running on ${PORT}`);
 });
