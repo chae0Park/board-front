@@ -19,20 +19,43 @@ const initialState = {
 
 //전체 게시글 불러오기 (페이지처리 x)
 export const fetchAllPosts = createAsyncThunk('posts/fetchAllPosts', async () => {
-    console.log("API_URL:", process.env.API_URL);
-    console.log('fetchAllPost호출');
-    const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/posts/all`);
-    console.log(", allPosts는?",response);
-    return response.data; // 모든 게시글 반환
+    const url = `${process.env.REACT_APP_API_URL}/api/posts/all`;
+    
+    console.log('🟡 [fetchAllPosts] 호출됨');
+    console.log('🔗 [요청 URL]', url);
+
+    try {
+        const response = await axios.get(url);
+        console.log('✅ [응답 성공]', response);
+        console.log('📦 [응답 데이터]', response.data);
+        return response.data;
+    } catch (error) {
+        console.error('❌ [요청 실패]', error);
+        console.error('📛 [에러 응답]', error.response?.data || error.message);
+        throw error;
+    }
 });
 
 
 
 //게시글 리스트 + 페이징 처리 
 export const fetchPosts = createAsyncThunk('posts/fetchPosts', async ({ page, postsPerPage }) => {
-    console.log('fetchPosts 호출:', { page, postsPerPage }); // 값 확인
-    const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/post?page=${page}&limit=${postsPerPage}`);
-    return response.data;
+    console.log('🟡 [fetchPosts] 호출됨:', { page, postsPerPage }); // 호출된 값 확인
+
+    const url = `${process.env.REACT_APP_API_URL}/api/post?page=${page}&limit=${postsPerPage}`;
+    console.log('🔗 [요청 URL]:', url); // 요청 URL 확인
+    // const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/post?page=${page}&limit=${postsPerPage}`);
+
+    try {
+        const response = await axios.get(url);
+        console.log('✅ [응답 성공]', response);
+        console.log('📦 [응답 데이터]', response.data);
+        return response.data;
+    } catch (error) {
+        console.error('❌ [요청 실패]', error);
+        console.error('📛 [에러 응답]', error.response?.data || error.message);
+        throw error;
+    }
 });
 
 //필터링 한 결과로 게시글 리스트 처리 
