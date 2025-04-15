@@ -150,3 +150,79 @@ img {
     }
 }
 
+
+@media (max-width: 1023px) and (min-width: 768px) {
+    .login-btn, .logout-btn, .mypage-btn {
+      width: 80px;        /* PC와 동일하게 유지 */
+      height: 36px;
+      font-size: 14px;
+    }
+  
+    .search-bar {
+      max-width: 75%;
+      font-size: 15px;
+    }
+  
+    .search-button {
+      font-size: 15px;
+      padding: 4px 12px;
+    }
+  
+    .search-icon {
+      width: 30px;
+      height: 30px;
+    }
+  
+    .left-title {
+      font-size: 18px;
+    }
+  
+    .lang-kor, .lang-eng {
+      width: 18px;
+      height: 18px;
+      top: -14px;
+      left: 10px;
+    }
+  }
+  
+
+
+@media (max-width: 767px) {
+    .login-btn, .logout-btn, .mypage-btn {
+      width: 80px;         /* 고정된 너비 */
+      height: 36px;        /* 고정된 높이 */
+      font-size: 14px;     /* 읽기 좋은 폰트 크기 */
+    }
+  
+    .search-bar {
+      max-width: 70%;
+      font-size: 14px;
+    }
+  
+    .search-button {
+      font-size: 14px;
+      padding: 4px 10px;
+    }
+  
+    .search-icon {
+      width: 28px;
+      height: 28px;
+      margin: 0 5px;
+    }
+  
+    .left-title {
+      font-size: 18px;
+    }
+  
+    .language {
+      font-size: 12px;
+    }
+  
+    .lang-kor, .lang-eng {
+      width: 18px;
+      height: 18px;
+      top: -14px;
+      left: 8px;
+    }
+  }
+    

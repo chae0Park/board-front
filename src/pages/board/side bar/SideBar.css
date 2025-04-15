@@ -1,17 +1,12 @@
-.SideBar{
+.SideBar {
     max-width: 22vw;
-    height: 40vh;   
+    height: 40vh;
     background-color: white;
     border-radius: 5px;
     box-shadow: 0 0 8px rgb(204, 204, 204);
     padding: 0 0.5rem;
-    
-
-    /**/
-    position: relative;
-    right: 38px;
-    top:68px;
-    
+    margin-top: 68px;
+    margin-left: auto; 
 }
 
 .SideBar-title{
@@ -25,11 +20,55 @@
 .SideBar-icon-container {
     display: grid;
     grid-template-columns: repeat(3, 1fr); /* 1fr: 3개의 동일한 너비로 나누기 */
-    gap: 10px;  /* 아이콘 간의 간격 */
+    gap: 10px; 
     row-gap: 17px;
 }
 
 .SideBar-icon-container .icon {
     display: flex;
-    justify-content: center;  /* 아이콘을 수평 가운데 정렬 */
+    justify-content: center;  
 }
+
+
+/* 태블릿: 768px ~ 1023px */
+@media (max-width: 1023px) {
+    .SideBar {
+      max-width: 70%;
+      width: 70%;
+      height: auto;
+      margin: 0 auto 2rem;
+      padding-bottom: 2rem;
+    }
+  
+    .SideBar-title {
+      font-size: 18px;
+      padding: 20px;
+    }
+  
+    .SideBar-icon-container {
+      grid-template-columns: repeat(5, 1fr); /* 공간 넉넉하니 4열 */
+    }
+  }
+  
+  /* 스마트폰: 0 ~ 767px */
+  @media (max-width: 767px) {
+    .SideBar {
+      max-width: 70%;
+      width: 70%;
+      height: auto;
+      margin: 0 auto 2rem;
+      padding: 0 1rem 1rem;
+    }
+  
+    .SideBar-title {
+      font-size: 16px;
+      padding: 15px;
+    }
+  
+    .SideBar-icon-container {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      row-gap: 12px;
+    }
+  }
+  

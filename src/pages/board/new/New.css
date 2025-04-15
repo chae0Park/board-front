@@ -6,13 +6,24 @@
 }
 
 .new-title{
-    /* padding order > clock wise */
     padding: 4% 0 2% 6%;
-
     font-size: 18px;
     font-weight: bold;
     text-align: left;
     color: rgb(94, 94, 94);
-
 }
 
+@media (max-width: 1023px) {
+    .New {
+        width: 100%;
+        height: auto;
+    }
+}
+
+/* 스마트폰 (0 ~ 767px) */
+@media (max-width: 767px) {
+    .New {
+        width: 100%;
+        height: auto;
+    }
+}

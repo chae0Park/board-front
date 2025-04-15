@@ -1,21 +1,18 @@
 
 /*작업크기 설정*/
-.Post-container{
+.Post-container {
     width: 48vw;
-    height: 24vh;
+    height: auto; 
     background-color: white;
     border-radius: 10px;
-    
     margin-left: 50px;
-
     margin-bottom: 20px;
+    padding-bottom: 1rem;
 }
 
-.Post-content{
-    position:relative;
-    left: 23px;
-    top: 17px;
-    /* border: 1px solid black; */
+.Post-content {
+    padding: 17px 0 0 23px;  
+    box-sizing: border-box;
 }
 
 /*사진 | 아이디, 글작성날짜 */
@@ -70,32 +67,123 @@ img{
     margin-bottom: 2px;
 }
 
-/* 가장 아래부분 가로 정렬*/
-.Post-btm{
+
+.Post-btm {
     display: flex;
     font-size: 11px;
-
-    position: relative;
-    top: 12px;
+    margin-top: 12px; 
+    gap: 8px;
 }
 
-오른쪽 섬네일 이미지
+
 .Post{
     display: flex;
     justify-content: space-between;
 }
 
-.post-content-img{
-    
+
+.post-content-img {
     width: 172px;
     height: 152px;
-    
-    position: relative;
-    right: 32px;
-    top: 8px
+    margin-right: 32px;
+    margin-top: 8px; 
 }
 
 .post-content-img-src{
     border-radius: 10px;
 }
 
+
+/* 태블릿 (768px ~ 1023px) */
+@media (max-width: 1023px) {
+    .Post-container {
+        width: 80%;
+        height: auto;
+        margin-left: 10%;
+    }
+
+    .Post-content {
+        left: 15px;
+        top: 10px;
+        height: auto;
+        
+    }
+
+    .Post-top {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .Post-mid {
+        width: 100%;
+    }
+
+    .Post-mid-title {
+        font-size: 16px;
+    }
+
+    .Post-mid-content {
+        font-size: 14px;
+    }
+
+    .Post-btm {
+        font-size: 12px;
+    }
+
+    .post-content-img {
+        width: 100%;
+        height: auto;
+    }
+
+    .Post {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+/* 스마트폰 (0 ~ 767px) */
+@media (max-width: 767px) {
+    .Post-container {
+        width: 80%;
+        height: auto;
+        margin-left: 10%;
+        margin-bottom: 15px;
+    }
+
+    .Post-content {
+        left: 10px;
+        top: 5px;
+    }
+
+    .Post-top {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .Post-mid {
+        width: 100%;
+    }
+
+    .Post-mid-title {
+        font-size: 14px;
+    }
+
+    .Post-mid-content {
+        font-size: 12px;
+    }
+
+    .Post-btm {
+        font-size: 10px;
+    }
+
+    .post-content-img {
+        width: 100%;
+        height: auto;
+        margin-top: 10px;
+    }
+
+    .Post {
+        flex-direction: column;
+        align-items: center;
+    }
+}
