@@ -1,5 +1,6 @@
 // front/src/features/posts/postsSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { fetchSearchFrequencies } from './searchSlice'; 
 import axios from 'axios';
 import { Post } from 'types/PostType';
 import { Comment } from 'types/CommentType'; // 댓글 타입 import
@@ -128,9 +129,10 @@ export const fetchSearchedPosts = createAsyncThunk<
     SearchParams
 >(
     'posts/fetchSearchedPosts', // 자동으로 타입을 생성합니다
-    async ({ searchTerm, searchOption }) => {
+    async ({ searchTerm, searchOption }, {dispatch}) => {
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/posts/search?query=${searchTerm}&option=${searchOption}`);
         console.log('fetchSearchedPosts  호출 후 응답 값',response)
+        dispatch(fetchSearchFrequencies());
         return response.data; // 리턴한 값은 action.payload로 사용됩니다
 
         // const url = `http://localhost:5002/api/posts/search?query=${searchTerm}&option=${searchOption}`;

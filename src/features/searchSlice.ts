@@ -21,7 +21,7 @@ const initialState:SearchFrequencyState = {
 export const fetchSearchFrequencies = createAsyncThunk<SearchFrequencyType[]>(
     'searchFrequency/fetchSearchFrequencies',
     async () => {
-        console.log('📢fetchSearchFrequencies called'); // API 호출 확인
+        // console.log('📢fetchSearchFrequencies called'); // API 호출 확인
         // 개발용
         // const url = `http://localhost:5002/api/search-frequencies`;
         // const response = await axios.get<SearchFrequencyType[]>(url);
