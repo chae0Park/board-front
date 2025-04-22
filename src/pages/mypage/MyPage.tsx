@@ -6,13 +6,15 @@ import { fetchMyPosts } from '../../features/postSlice';
 import default_user from '../../assets/image/user-1699635_1280.png';
 import Post from '../../component/Post';
 import './MyPage.css';
+import { AppDispatch, RootState } from '@/app/store';
+import { Post as PostType } from 'types/PostType'; // Post 타입을 가져옵니다.
 
 const MyPage = () => {
-    const dispatch = useDispatch();
-    const [nav, setNav] = useState('post'); 
-    const fileInputRef = useRef(null);
-    const { user, userFetched } = useSelector(state => state.auth);
-    const { myPosts, postsWithComments, likedPosts } = useSelector(state => ({
+    const dispatch = useDispatch<AppDispatch>();
+    const [nav, setNav] = useState<string>('post'); 
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const { user, userFetched } = useSelector((state: RootState) => state.auth);
+    const { myPosts, postsWithComments, likedPosts } = useSelector((state: RootState) => ({
         myPosts: state.posts.myPosts,
         postsWithComments: state.posts.postsWithComments,
         likedPosts: state.posts.likedPosts,
@@ -29,21 +31,27 @@ const MyPage = () => {
     }, [dispatch, user, userFetched]);
   
     //유저 프로필 사진 변경 
-    const handleFileChange = (event) => {
-        const file = event.target.files[0];
-        if(file){
+    const handleFileChange = (event:React.ChangeEvent<HTMLInputElement> ) => {
+        // const file = event.target.files[0];
+        let file: File | null = null; // file 변수를 null로 초기화
+        if(event.target.files && event.target.files.length > 0){
+            file = event.target.files[0]
+        }
+        if(file && user){
             dispatch(uploadProfileImage(file, user.id))
         }
     };
     
     // profileImage 클릭으로 input 트리거 
     const handleProfileClick = () => {
-        fileInputRef.current.click(); 
+        if(fileInputRef.current){
+            fileInputRef.current.click();
+        }
     };
 
 
     //nav
-    const handleSelect = (selection) => {
+    const handleSelect = (selection: string) => {
         setNav(selection);
         console.log('선택된 nav 키는?',selection);
     }
@@ -119,7 +127,7 @@ const MyPage = () => {
 
             {/*유저가 댓글 단 게시물 */}
             <div className='user-contents'>
-            {nav === 'comment' && postsWithComments.length > 0 && (
+            {nav === 'comment' && (postsWithComments && postsWithComments.length > 0) && (
                 postsWithComments.map(post => (
                     <Post key={post._id} post={post} />
                 ))
@@ -128,7 +136,7 @@ const MyPage = () => {
 
             {/*유저가 좋아요한 게시물 */}
             <div className='user-contents'>
-            {nav === 'like' && likedPosts.length > 0 && (
+            {nav === 'like' && (likedPosts && likedPosts.length > 0) && (
                 likedPosts.map(post => (
                     <Post key={post._id} post={post} />
                 ))

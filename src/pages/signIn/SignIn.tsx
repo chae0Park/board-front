@@ -1,15 +1,18 @@
 import { Link, useNavigate } from 'react-router-dom';
 import './SignIn.css';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { loginUser } from '../../features/authSlice'; 
 import { useDispatch } from 'react-redux';
 import Modal from '../../component/Modal';
 import { useTranslation } from 'react-i18next';
+import { AppDispatch } from '@/app/store';
+
+
 
 const SignIn = () => {
     const [ formData, setFormData ] = useState({ email:'', password:'', });
-    const [ errorMessage, setErrorMessage ] = useState('');
-    const dispatch = useDispatch();
+    const [ errorMessage, setErrorMessage ] = useState<string>('');
+    const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
 
     //다국어 처리 
@@ -19,17 +22,17 @@ const SignIn = () => {
         navigate('/');
     }
     
-    const handleChange = (e) => {
+    const handleChange = (e:React.ChangeEvent<HTMLInputElement>) => {
         setFormData({...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e:React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try{
             await dispatch(loginUser(formData));
             setErrorMessage('');
             onNavigate();
-        }catch (error) {
+        }catch (error: any) {
             setErrorMessage(error.response?.data.message || 'User not exists');
         }
     }
@@ -52,13 +55,12 @@ const SignIn = () => {
                         <div className='email-container'>
                             <div  className='signin-email'>{t('email')}</div>
                             <input type='email' 
-                            name='email'
-                            className='bottom-border' 
-                            placeholder= {t('email-placeholder')}
-                            
-                            value={formData.email}
-                            onChange={handleChange}
-                            required
+                                name='email'
+                                className='bottom-border' 
+                                placeholder= {t('email-placeholder')}
+                                value={formData.email}
+                                onChange={handleChange}
+                                required
                             />            
                         </div>                       
                     </div>

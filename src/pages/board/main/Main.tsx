@@ -10,21 +10,26 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchAllPosts,fetchPosts } from '../../../features/postSlice';
 import { PageProvider, usePageContext } from '../../../app/PageContext';
 import { useTranslation } from 'react-i18next';
+import { RootState } from '@/app/store';
+import { AppDispatch } from '@/app/store';
+import {CalculateScoreData, Post} from 'types/PostType';
+
 
 const Main = () => {
-    const dispatch = useDispatch();    
+    // ✅useDispatch 타입지정
+    const dispatch = useDispatch<AppDispatch>();    
     // 쿼리 파라미터에서 페이지 번호 가져오기
     const { currentPage, setCurrentPage, initialPage, location } = usePageContext(); // Context에서 값 가져오기
     const postsPerPage = 3;
-    const [ weeklyTop3, setWeeklyTop3 ] = useState([]);
+    const [ weeklyTop3, setWeeklyTop3 ] = useState<Post[]>([]);
     //다국어 처리 
     const { t } = useTranslation();
     
     //posts스토어를 통해 posts데이터들, 상태, 전체 포스트의 갯수를 가져옴 
-    const posts = useSelector((state) => state.posts.posts);
-    const postStatus = useSelector((state) => state.posts.status); 
-    const totalPosts = useSelector((state) => state.posts.totalPosts);
-    const allPosts = useSelector((state) => state.posts.allPosts);
+    const posts = useSelector((state: RootState) => state.posts.posts);
+    const postStatus = useSelector((state: RootState) => state.posts.status); 
+    const totalPosts = useSelector((state: RootState) => state.posts.totalPosts);
+    const allPosts = useSelector((state: RootState) => state.posts.allPosts);
     
     //weekly top3 를 위한 posts전체 데이터 - page 처리 하지 않음 
     useEffect(() => {
@@ -51,8 +56,12 @@ const Main = () => {
     //currentPage, initialPage를 없애니 다른 페이지로 넘어갈때 오류 뜸 
 
     //weeklyTop3 점수 계산하는 함수 
-    const calculateScore = (post) => {
-        return (post.like * 3) + ((post.comments ? post.comments.length : 0) * 2) + post.views;
+    const calculateScore = (post:CalculateScoreData):number => {
+        return (
+            (post.like || 0 * 3) + 
+            ((post.comments ? post.comments.length : 0) * 2) + 
+            (post.views || 0)
+        );
     };
         
    
@@ -60,7 +69,7 @@ const Main = () => {
     useEffect(() => {
         if (allPosts.length > 0) {
             // 모든 게시물의 점수를 계산하여 상위 3개 게시물 뽑기
-            const sortedPosts = [...allPosts]
+            const sortedPosts: Post[] = [...allPosts]
                 .map((post) => ({
                     ...post,
                     score: calculateScore(post),
@@ -79,12 +88,17 @@ const Main = () => {
     useEffect(() => {
         const lastFetchedDate = localStorage.getItem('lastFetchedDate');
         const now = new Date();
-        const lastFetched = new Date(lastFetchedDate);
+        let lastFetched: Date | null = null;
+
+        if(typeof lastFetchedDate === 'string') {
+            lastFetched = new Date(lastFetchedDate)
+        };
 
         const isSunday = now.getDay() === 0;
+        const weekInMs = 7 * 24 * 60 * 60 * 1000; // 1week in milliseconds
 
         // 로컬 스토리지에 저장된 날짜가 없거나, 1주일이 지났다면 다시 갱신
-        if ((!lastFetchedDate || now - lastFetched >= 7 * 24 * 60 * 60 * 1000) && isSunday) {
+        if ((!lastFetchedDate || (lastFetched && now.getTime() - lastFetched.getTime() >= weekInMs)) && isSunday) {
             // 새로운 Top 3 게시물 계산 (주기적으로 갱신)
             dispatch(fetchAllPosts());  // 새로 데이터를 가져와서 갱신
             localStorage.setItem('lastFetchedDate', now.toISOString());
@@ -116,9 +130,9 @@ const Main = () => {
             </div>
 
             <div className='main-board-container'>
-                <div className='big-container2'>       
-                        <New posts={posts} />        
-                        <SideBar/>              
+                <div className='big-container2' >       
+                    <New posts={posts} />        
+                    <SideBar/>              
                 </div>
 
                 <div className='page-num'>

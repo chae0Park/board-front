@@ -1,8 +1,14 @@
+import React from 'react';
 import Post from '../../../component/Post';
 import './New.css';
 import { useTranslation } from 'react-i18next';
+import { Post as PostType } from 'types/PostType';
 
-const New = ({ posts }) => {
+type NewProps = {
+    posts: PostType[];
+}
+
+const New: React.FC<NewProps> = ({ posts }) => {
     //다국어 처리 
     const { t } = useTranslation();
 

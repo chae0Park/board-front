@@ -7,7 +7,7 @@ import SignUpFirst from './pages/signUp/SignUpFirst';
 import Write from './pages/board/write/Write';
 import MyPage from './pages/mypage/MyPage';
 import Edit from './pages/edit/Edit';
-import { PageProvider } from '../src/app/PageContext';
+import { PageProvider } from './app/PageContext';
 import { LanguageProvider } from './locales/LanguageContext';
 import SearchResult from './pages/board/search result/SearchResult';
 

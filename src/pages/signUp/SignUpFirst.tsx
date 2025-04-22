@@ -7,15 +7,17 @@ import { registerUser } from '../../features/authSlice';
 import Modal from '../../component/Modal';
 import { useTranslation } from 'react-i18next';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
-import { signUpValidationSchema } from '../../validation.js';
+import { signUpValidationSchema } from '../../validation';
+import { AppDispatch } from '@/app/store';
+
+
 
 const SignUpFirst = () => {
-    const dispatch = useDispatch();
+    const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
     const { t } = useTranslation();
 
-    //state to hold the error message for modal
-    const [ modalErrorMessage, setModalErrorMessage ] = useState(null);
+    const [modalErrorMessage, setModalErrorMessage] = useState(null);
 
     return (
         <div className="SignUp">
@@ -34,15 +36,15 @@ const SignUpFirst = () => {
                         telNumber: '',
                         address: '',
                         addressDetail: '',
-                        agreedPersonal: false,
                     }}
+                    initialStatus={{ submit: '' }}
                     validationSchema={signUpValidationSchema(t)}
-                    onSubmit={async (values, { setSubmitting, setErrors }) => {
+                    onSubmit={async (values, { setSubmitting, setStatus }) => {
                         try {
-                            dispatch(registerUser(values)); //await 지움
+                            dispatch(registerUser(values));
                             navigate('/signin');
-                        } catch (error) {
-                            setErrors({ submit: error.response?.data.message || 'Registration failed' });
+                        } catch (error: any) {
+                            setStatus({ submit: error.response?.data.message || 'Registration failed', });
 
                             // show error in modal
                             setModalErrorMessage(error.response?.data.message || 'Registration failed');
@@ -51,8 +53,9 @@ const SignUpFirst = () => {
                         }
                     }}
                 >
-                    {({ isSubmitting, errors, touched }) => (
+                    {({ isSubmitting, status }) => (
                         <Form>
+                            {status?.submit && <div className="error">{status.submit}</div>}
                             <div className="signup email">
                                 <div className='email-container'>
                                     <div className='signup-email'>{t('email')}*</div>

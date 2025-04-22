@@ -2,24 +2,36 @@ import './Detail.css';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { fetchPosts, fetchPostById, deletePost, likePost } from '../../../features/postSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Comment from '../../../component/Comment';
 import Reply from '../../../component/Reply';
 import { addComment } from '../../../features/commentSlice';
 import { useTranslation } from 'react-i18next';
 import default_user from '../../../assets/image/user-1699635_1280.png';
+import { RootState } from '@/app/store';
+import { AppDispatch } from '@/app/store';
+import { Post } from 'types/PostType';
+import { User } from 'types/UserType';
+import { Comment as CommentType } from 'types/CommentType';
 
 
 
 const Detail = () => {
-    const { id } = useParams();
-    const { token } = useSelector((state) => state.auth); // 토큰 가져오기
+    const { id } = useParams<{ id: string }>();
+    const { token } = useSelector((state: RootState) => state.auth); // 토큰 가져오기
     const isLoggedIn = !!token; // 토큰이 있으면 로그인 상태
-    const dispatch = useDispatch();
+    const [ commentList, setCommentList ] = useState<CommentType[]>([]); // 댓글 상태 관리
+    const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
-    const post = useSelector((state) => state.posts.currentPost);
-    const currentUser = useSelector((state) => state.auth.user);
-    const comments = useSelector((state) => state.posts.comments);
+    const post = useSelector((state:RootState) => state.posts.currentPost) as Post | null;
+    const currentUser = useSelector((state:RootState) => state.auth.user)  as User | null;
+    const comments = useSelector((state:RootState) => state.posts.comments);
+
+    useEffect(() => {
+        if (comments && comments.length > 0) {
+            setCommentList(comments);
+        }
+    }, [comments]);
 
     const [loading, setLoading] = useState(true);
     const [likeActive, setLikeActive] = useState(false);
@@ -27,8 +39,8 @@ const Detail = () => {
     //comment part setting 
     const [commentInput, setCommentInput] = useState('');
     const [isCommenting, setIsCommenting] = useState(false);
-    const [replyInputs, setReplyInputs] = useState({});
-    const [showReplyInput, setShowReplyInput] = useState({}); // 각 댓글에 대한 토글 상태
+    const [replyInputs, setReplyInputs] = useState<Record<string, string>>({});
+    const [showReplyInput, setShowReplyInput] = useState<Record<string, boolean>>({}); // 각 댓글에 대한 토글 상태
 
     //다국어 처리 
     const { t } = useTranslation();
@@ -36,7 +48,9 @@ const Detail = () => {
     useEffect(() => {
         const fetchPostData = async () => {
             setLoading(true); // 데이터 로딩 시작
-            dispatch(fetchPostById(id));
+            if(id){
+                dispatch(fetchPostById(id));
+            }
             setLoading(false); // 데이터 로딩 완료
         };
 
@@ -45,12 +59,12 @@ const Detail = () => {
 
     //삭제 후 다시 posts가지고옴 
     useEffect(() => {
-        dispatch(fetchPosts()); // 페이지에 맞는 게시물 가져오기
+        dispatch(fetchPosts({ page: 0, postsPerPage: 3 })); // 페이지에 맞는 게시물 가져오기
     }, [dispatch]);
 
 
     // 삭제
-    const handleDelete = (id) => {
+    const handleDelete = (id: string) => {
         if (window.confirm(t('delete-confirm'))) {
             dispatch(deletePost(id))
                 .then(() => {
@@ -68,12 +82,14 @@ const Detail = () => {
 
     //like
     useEffect(() => {
-        if (post && isLoggedIn) {
-            // 현재사용자의 아이디 확인 
-            console.log("Current User ID:", currentUser.id);
-            setLikeActive(post.likedBy.includes(currentUser.id));
+        if (post && isLoggedIn && currentUser) {
+            console.log("Current User ID:", currentUser?.id);
+            if(post.likedBy && post.likedBy.length > 0) {
+                setLikeActive(post.likedBy.includes(currentUser.id));
+            }
         }
     }, [post, isLoggedIn, currentUser]);
+
 
     const handleLike = async () => {
         if (!isLoggedIn) {
@@ -82,11 +98,12 @@ const Detail = () => {
         }
 
         try {
-            const response = await dispatch(likePost(post._id));
-            if (response.payload) {
-                setLikeActive(!likeActive); // 좋아요 상태 토글
+            if(post){
+                const response = await dispatch(likePost(post._id));
+                if (response.payload) {
+                    setLikeActive(!likeActive); // 좋아요 상태 토글
+                }
             }
-            //alert('좋아요 상태가 변경되었습니다.');
         } catch (error) {
             console.error('좋아요 추가 중 오류 발생:', error);
             //alert('좋아요 추가에 실패했습니다.');
@@ -94,12 +111,12 @@ const Detail = () => {
     };
 
     //댓글창 토글
-    const handleCommentToggle = () => { //max 강의 참조
+    const handleCommentToggle = () => { 
         setIsCommenting((commenting) => !commenting);
     };
 
     //대댓글 입력창 토글 
-    const toggleReplyInput = (commentId) => {
+    const toggleReplyInput = (commentId: string): void => {
         setShowReplyInput(prev => ({
             ...prev,
             [commentId]: !prev[commentId], // 현재 상태 반전
@@ -108,21 +125,24 @@ const Detail = () => {
 
 
     //댓글 작성 
-    const handleCommentSubmit = async (e, parentId = null) => {
+    const handleCommentSubmit = async (e: React.FormEvent, parentId: string | null = null) => {
         e.preventDefault();
         if (!isLoggedIn) {
             alert(t('log-in feature'));
             return;
         }
+
+        if(!post) return;
+
         const content = parentId ? replyInputs[parentId] : commentInput;
 
-        if (content.trim()) {
+        if (content && content.trim()) {
             await dispatch(addComment(post._id, content, parentId));
             await dispatch(fetchPostById(post._id));
             if (parentId) {
                 setReplyInputs((prev) => ({ ...prev, [parentId]: '' })); //대댓글 입력 필드 초기화
                 // 대댓글 작성 후 댓글 목록을 다시 가져오기
-                setShowReplyInput(prev => !prev);
+                setShowReplyInput(prev => ({...prev, [parentId]: false}));
             } else {
                 setCommentInput('');
                 setIsCommenting(false);
@@ -132,7 +152,7 @@ const Detail = () => {
     };
 
     //내가 선택한 댓글에만 대댓글 작성  
-    const handleReplyInputChange = (commentId, value) => {
+    const handleReplyInputChange = (commentId: string, value: string) => {
         setReplyInputs((prev) => ({
             ...prev,
             [commentId]: value,
@@ -173,11 +193,13 @@ const Detail = () => {
                             </div>
                         ) : (
                             <div className='detail-author-date'>
-                                posted: {new Date(post.createdAt).toLocaleDateString('en-US', {
-                                    year: 'numeric',
-                                    month: 'short', // 월을 약어로 표시
-                                    day: '2-digit'
-                                })}
+                                posted: {post.createdAt ? (
+                                    new Date(post.createdAt).toLocaleDateString('en-US', {
+                                        year: 'numeric',
+                                        month: 'short',
+                                        day: '2-digit',
+                                    })
+                                ) : ('')}
                             </div>
                         )}
                     </div>
@@ -219,28 +241,28 @@ const Detail = () => {
                         </form>
                     )}
                     <div className="comments-list">
-                        {comments.map((comment) => (
+                        {(commentList && commentList.length > 0) && commentList.map((comment) => (
+                            (comment.author && comment.profileImage && comment.createdAt ) && 
                             <div key={comment._id} className='detail-comment'>
                                 <Comment
                                     author={comment.author}
                                     profileImg={comment.profileImage}
                                     timestamp={comment.createdAt}
                                     content={comment.content}
-                                    flip={() => toggleReplyInput(comment._id)} // 함수 전달
+                                    flip={() => toggleReplyInput(comment._id as string)} // 함수 전달
                                 />
-                                {showReplyInput[comment._id] && ( //reply 인풋 flip
+                                {showReplyInput[comment._id as string] && ( //reply 인풋 flip
                                     <div className='reply-input'>
                                         <form onSubmit={(e) => handleCommentSubmit(e, comment._id)}>
                                             <input
-                                                value={replyInputs[comment._id] || ''}
-                                                onChange={(e) => handleReplyInputChange(comment._id, e.target.value)}
+                                                value={replyInputs[comment._id as string] || ''}
+                                                onChange={(e) => handleReplyInputChange(comment._id as string, e.target.value)}
                                                 placeholder={t('reply here')}
                                                 className='replyInputbox'
                                             />
                                             <button className='reply-btn' type='submit'>submit</button>
                                         </form>
                                     </div>
-
                                 )}
 
                                 {comment.replies && comment.replies.length > 0 && (
@@ -252,13 +274,12 @@ const Detail = () => {
                                                 profileImg={reply.profileImage}
                                                 timestamp={reply.createdAt}
                                                 content={reply.content}
-                                                className='reply_to_comment'
                                             />
                                         ))}
                                     </div>
                                 )}
                             </div>
-                        ))}
+                        ))} 
                     </div>
                 </div>
             </div>

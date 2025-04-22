@@ -1,4 +1,5 @@
 import './Header.css';
+import React, { KeyboardEvent, ChangeEvent } from 'react';
 import search from '../../assets/image/search-icon.png';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -9,23 +10,23 @@ import korea from '../../assets/image/south-korea.png';
 import english from '../../assets/image/united-kingdom.png';
 import { useTranslation } from 'react-i18next';
 import { useLanguage } from '../../locales/LanguageContext.js';
-
+import { AppDispatch, RootState } from '@/app/store';
 
 
 const Header = () => {
-    const dispatch = useDispatch();
+    const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
     //서치바
-    const [clickSearchIcon, setClickSearchIcon] = useState(false);
-    const [searchValue, setSearchValue] = useState('');
-    const [searchOption, setSearchOption] = useState('all');
+    const [clickSearchIcon, setClickSearchIcon] = useState<boolean>(false);
+    const [searchValue, setSearchValue] = useState<string>('');
+    const [searchOption, setSearchOption] = useState<string>('all');
 
     const { t } = useTranslation();
     const { changeLanguage } = useLanguage();
-    const [openLanguage, setOpenLanguage] = useState(false);
+    const [openLanguage, setOpenLanguage] = useState<boolean>(false);
 
     //get the logging user from Redux
-    const user = useSelector((state) => state.auth.user);
+    const user = useSelector((state: RootState) => state.auth.user);
 
     const onNavigate = () => {
         navigate("/signin");
@@ -45,11 +46,11 @@ const Header = () => {
         setOpenLanguage((click) => !click);
     }
 
-    const handleSearchOptionChange = (event) => {
+    const handleSearchOptionChange = (event: ChangeEvent<HTMLSelectElement>) => {
         setSearchOption(event.target.value);
     };
 
-    const handleSearchValueChange = (event) => {
+    const handleSearchValueChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchValue(event.target.value);
     };
 
@@ -63,7 +64,7 @@ const Header = () => {
         setClickSearchIcon(false);
     };
 
-    const handleKeyDown = (e) => {
+    const handleKeyDown = (e:KeyboardEvent <HTMLInputElement> ) => {
         if (e.key === 'Enter') {
             handleSearch();
         }

@@ -1,7 +1,12 @@
-import React from 'react';
+import React from 'react';  
 import './Modal.css'
 
-const Modal = ({ message, onClose }) => {
+interface ModalProps {
+    message: string | null;
+    onClose: () => void;
+}
+
+const Modal: React.FC<ModalProps> = ({ message, onClose }) => {
     if (!message) return null; // Don't render if no message
 
     return (

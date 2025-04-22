@@ -4,9 +4,10 @@ import Header from '../../header/Header';
 import Page from '../page nation/Page';
 import './SearchResult.css';
 import { selectSearchedPosts, selectSearchTerm } from '../../../features/postSlice';
+import { Post as PostType } from 'types/PostType';
 
 const SearchResult = () => {
-    const searchedPosts = useSelector(selectSearchedPosts);
+    const searchedPosts = useSelector(selectSearchedPosts) as PostType[];
     const keyword = useSelector(selectSearchTerm);
     
     return(

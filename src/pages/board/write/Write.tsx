@@ -11,15 +11,16 @@ import Modal from '../../../component/Modal';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css'; // 스타일 import
 import { useTranslation } from 'react-i18next';
+import { AppDispatch,RootState } from '../../../app/store';
 
 
 const Write = () => {
-    const dispatch = useDispatch();
-    const quillRef = useRef(null);
-    const { user, userFetched } = useSelector(state => state.auth);  
-    const [title, setTitle] = useState('');
-    const [content, setContent] = useState('');
-    const [ modalOpen, setModalOpen ] = useState(true);
+    const dispatch = useDispatch<AppDispatch>();
+    const quillRef = useRef<ReactQuill | null>(null);
+    const { user, userFetched } = useSelector((state:RootState) => state.auth);  
+    const [title, setTitle] = useState<string>('');
+    const [content, setContent] = useState<string>('');
+    const [ modalOpen, setModalOpen ] = useState<boolean>(true);
     const navigate = useNavigate();
     const { currentPage } = usePageContext();
     const postsPerPage = 3;
@@ -28,6 +29,7 @@ const Write = () => {
 
     //다국어 처리 
     const { t } = useTranslation();
+
 
     //로그인한 유저의 정보를 가져온다 
     useEffect(() => {
@@ -48,7 +50,7 @@ const Write = () => {
     }
 
     //게시물올리기 
-    const handleSubmit = (e) => {
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         console.log('프로필 이미지:', user.profileImage); // 추가: 프로필 이미지 확인
@@ -57,7 +59,9 @@ const Write = () => {
         formData.append('title', title);
         formData.append('content', content);
         formData.append('author', user.nickname);
-        formData.append('profilePicture', user.profileImage); // 추가: 프로필 사진 URL
+        if(user.profileImage) {
+            formData.append('profilePicture', user.profileImage); 
+        }
 
         dispatch(addPost(formData))
         
@@ -77,8 +81,6 @@ const Write = () => {
         
     };
 
-    
-    
 
     return (
         <div>       

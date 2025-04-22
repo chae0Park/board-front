@@ -2,19 +2,24 @@ import { Link } from 'react-router-dom';
 import './Top3.css';
 import { useTranslation } from 'react-i18next';
 import default_user from "../assets/image/user-1699635_1280.png";
+import React from 'react';
+import { Post } from 'types/PostType';
 
+type Top3Props = {
+    post: Post | null; // 게시글 데이터
+};
 
-const Top3 = ({ post }) => {
+const Top3: React.FC<Top3Props> = ({ post }) => {
     //다국어 처리 
     const { t } = useTranslation();
 
-    if (!post) {
+    if (typeof post === 'undefined' || post === null) {
         return null; // 게시글이 없는 경우 null 반환
     }
 
-    const commentCount = post.comments.length;
-    const previewTitle = getPreviewTitle(post.title);
-    const previewText = getPreviewText(post.content);
+    const commentCount:number = (post.comments && post.comments.length > 0 )? post.comments.length : 0;
+    const previewTitle:string = getPreviewTitle(post.title);
+    const previewText: string = getPreviewText(post.content);
     
     
 
@@ -27,7 +32,7 @@ const Top3 = ({ post }) => {
                     </div>
                     <div className='Top3-user-info'>
                         <div className='id'>{post.author}</div>
-                        <div className='date'>{new Date(post.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: '2-digit' })}</div>
+                        <div className='date'>{new Date(post.createdAt ?? '').toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: '2-digit' })}</div>
                     </div>
                 </div>
                 <div className='Top3-mid'>
@@ -48,11 +53,11 @@ const Top3 = ({ post }) => {
             
 }
 
-const getPreviewTitle = (title) => {
+const getPreviewTitle = (title:string):string => {
     return title.length > 28 ? title.slice(0, 28) + '...' : title;
 };
 
-const getPreviewText = (content) => {
+const getPreviewText = (content:string):string => {
     const textOnly = content.replace(/<img[^>]*>/g, '');
     const tempElement = document.createElement('div');
     tempElement.innerHTML = textOnly;

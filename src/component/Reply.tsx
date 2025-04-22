@@ -1,6 +1,15 @@
 import './Reply.css';
 import default_user from '../assets/image/user-1699635_1280.png';
-const Reply = ({author, profileImg, timestamp, content}) => {
+import React from 'react';
+
+interface ReplyProps {
+    author: string;
+    profileImg: string;
+    timestamp: string;
+    content: string;
+}
+
+const Reply:React.FC<ReplyProps> = ({author, profileImg, timestamp, content}) => {
 
     return(
         <div className='Reply'>

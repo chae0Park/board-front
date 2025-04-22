@@ -1,7 +1,9 @@
 // validationSchema.js
 import * as Yup from 'yup';
 
-export const signUpValidationSchema = (t) => Yup.object({
+type TranslateFunction = (key: string) => string;
+
+export const signUpValidationSchema = (t: TranslateFunction) => Yup.object({
     email: Yup.string()
         .email(t('valid-email')) // t()를 사용하여 동적 메시지 적용
         .required(t('email-required')),
@@ -12,7 +14,7 @@ export const signUpValidationSchema = (t) => Yup.object({
         .matches(/[\W_]/, t('special character needed'))
         .required(t('password required')),
     confirmPassword: Yup.string()
-        .oneOf([Yup.ref('password'), null], t('password different'))
+        .oneOf([Yup.ref('password'), undefined], t('password different'))
         .required(t('password confirm required')),
     nickname: Yup.string()
         .max(10, t('nickname less than 11'))

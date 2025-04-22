@@ -1,7 +1,15 @@
 import './Comment.css';
 import default_user from '../assets/image/user-1699635_1280.png';
 
-const Comment = ({author, profileImg, timestamp, content, flip }) => {
+interface CommentProps {
+    author: string;
+    profileImg: string; 
+    timestamp: string;
+    content: string;
+    flip: () => void; 
+}
+
+const Comment = ({author, profileImg, timestamp, content, flip }: CommentProps) => {
     const formatter = new Intl.DateTimeFormat('ko-KR', {
         year: 'numeric',
         month: '2-digit',
