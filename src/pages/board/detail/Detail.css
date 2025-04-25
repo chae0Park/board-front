@@ -1,38 +1,32 @@
-/* .Detail {
-    width: 70vw;
-    height: auto;
-    margin: 0 auto;
-    padding: 20px;
-    box-sizing: content-box;
-} */
-
 .Detail {
     width: 70vw;
-    min-height: 100vh; /* 기본적으로 화면 전체를 감싸도록 설정 */
     height: auto; /* 내용이 많으면 자동으로 확장 */
     margin: 0 auto;
-    padding: 20px;
-    box-sizing: border-box; /* content-box가 아니라 border-box 사용 */
+    padding: 2%;
+    box-sizing: border-box; /* 패딩을 포함한 너비 계산 */
     display: flex;
     flex-direction: column; /* 자식 요소들을 세로로 정렬 */
+    /* border: 3px solid orange; */
 }
 
 .detail-title{
-    font-size: 37px;
+    font-size: 2.3rem;
     height: 8%;
-    margin-bottom: 20px;
+    margin-bottom: 1.25rem;
+    /* text-align: center; */
 }
 
 .detail-container1{
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 50px;
+    margin-bottom: 3.125rem;
+    width: 100%;
 }
 
 .detail-author-profile, .detail-author-id, .detail-author-date{
-    margin-right: 5px;
-    font-size: 15px;
+    margin-right: 0.3rem;
+    font-size: 0.9rem;
 }
 
 .detail-author-info{
@@ -40,9 +34,9 @@
     align-items: center;
 }
 
-.detail-author-profile{
-    width: 30px;
-    height: 30px;
+.detail-author-profile{ /*작성자 프로필 이미지*/
+    width: 1.9rem;
+    height: 1.9rem;    
 }
 
 .detail-profileImg{
@@ -51,12 +45,23 @@
     border-radius: 100%;
 }
 
-.detail-content{
-    font-size: 18px;
-    padding-bottom: 2rem;
+.detail-container2{
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
+    max-width: 100%;
+    height: auto; 
+    display: flex;
+    flex-direction: column;
+    width: 100%;
 }
 
-
+.detail-content{
+    font-size: 1.125rem;
+    padding-bottom: 2rem;
+    width: 100%;
+    border-bottom: 1px solid rgba(181, 181, 181, 0.449);
+}
 
 .detail-content img {
     max-width: 250px;  /* 최대 너비를 250px로 제한 */
@@ -70,8 +75,8 @@
     font-size: 15px;
     margin-top: 10px;
     margin-bottom: 50px;
+    width: 100%;
 }
-
 
 .detail_edit_btn, .detail_delete_btn{
     border: 0;
@@ -84,26 +89,58 @@
     cursor: pointer;
 }
 
-
 .commentInput{
     width: 50%;
-    height: 20px;
+    height: 2rem; /* Increased from 0.2rem which was too small */
+    padding: 0.5rem;
+    margin: 5px 0 5px;
+    box-sizing: border-box;
     border: none;
     border-bottom: solid #6e7383 1px;
-    margin: 5px 0 5px;
+}
+
+.comments-list{
+    max-width: 100%;
+    height: auto;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    box-sizing: border-box;
+    width: 100%;
+    padding-bottom: 4rem;
+}
+
+.detail-comment {
+    width: 100%;
+    margin-bottom: 15px;
 }
 
 .replyInputbox{
+    width: 50%;
+    height: 2rem;
+    padding: 0.5rem;
     border: none;
     border-bottom: solid #6e7383 1px;
+    box-sizing: border-box;
 }
+
 /* 인풋박스 클릭 - 효과 없음  */
-.commentInput:focus{
+.commentInput:focus, .replyInputbox:focus {
     outline: none;
 }
 
-.reply-input, .reply_to_comment{
-    margin-left: 1rem;   
+.reply-input {
+    padding-left: 1.5rem; /* instead of margin-left */
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.replies_in_detail {
+    padding-left: 1.5rem;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .reply-btn{
@@ -120,6 +157,28 @@
     border-radius: 10%;
 }
 
-.replies_in_detail{
-    margin-left: 3rem;
+/* Add responsive styles */
+@media (max-width: 768px) {
+    .Detail {
+        width: 90vw;
+    }
+    
+    .commentInput, .replyInputbox {
+        width: 70%;
+    }
+}
+
+@media (max-width: 480px) {
+    .Detail {
+        width: 95vw;
+        padding: 1%;
+    }
+    
+    .detail-title {
+        font-size: 1.8rem;
+    }
+    
+    .commentInput, .replyInputbox {
+        width: 100%;
+    }
 }

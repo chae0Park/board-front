@@ -4,21 +4,21 @@
     width: 48vw;
     height: auto; 
     background-color: white;
-    border-radius: 10px;
-    margin-left: 50px;
-    margin-bottom: 20px;
+    border-radius: 0.625em;
+    margin-left: 3.125em;
+    margin-bottom: 1.25em;
     padding-bottom: 1rem;
 }
 
 .Post-content {
-    padding: 17px 0 0 23px;  
+    padding: 1.063em 0 0 1.438em;  
     box-sizing: border-box;
 }
 
 /*사진 | 아이디, 글작성날짜 */
 .Post-top{
     display: flex;
-    margin-bottom: 10px;
+    margin-bottom: 0.625em;
 }
 
 .Post-user-info, .Post-mid, .Post-btm{
@@ -34,13 +34,10 @@ img{
 }
 
 .Post-img{
-    
-    height: 40px;
-    width: 40px;
-    border: none;
-    margin-right: 10px;
-
-    
+    height: 2.5em;
+    width: 2.5em;
+    /* border: none; */
+    margin-right: 0.625em;
 }
 
 .Post-profile-img{
@@ -95,18 +92,22 @@ img{
 
 
 /* 태블릿 (768px ~ 1023px) */
-@media (max-width: 1023px) {
+@media (max-width: 63.938rem) {
     .Post-container {
         width: 80%;
         height: auto;
         margin-left: 10%;
+        border: 3px solid orange;
     }
 
     .Post-content {
-        left: 15px;
-        top: 10px;
         height: auto;
-        
+        width: 80%;
+        border: 3px dotted orange;
+    }
+
+    .Post-top{
+        border: 3px solid orange;
     }
 
     .Post-top {

@@ -226,7 +226,10 @@ const Detail = () => {
 
                         <div onClick={handleCommentToggle} style={{ cursor: 'pointer' }} > ✏️</div>
                         <div onClick={handleCommentToggle} style={{ cursor: 'pointer' }}>{t('comment')}</div>
-                    </div>
+                    </div> 
+{/* ----------------------------이 코드 위로는 css 잘 들어감 ----------------------------------------------------------------- */}
+
+
 
                     {isCommenting && ( // 댓글 창을 클릭하면 작성할 수 있도록 
                         <form onSubmit={handleCommentSubmit}>

@@ -1,8 +1,8 @@
 
 .Comment{
-    /* border: 1px solid gray; */
     font-size: 13px;
     padding-top: 15px;
+    height: auto;
 }
 
 .comment-top{

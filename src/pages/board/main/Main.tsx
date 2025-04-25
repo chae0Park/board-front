@@ -112,12 +112,10 @@ const Main = () => {
         <div className='Main'>
             {/* title under the Header component */}
             <div className='Main-Container1'>
-                <div className="Main-title">
-                        <div className='Main-title-writing'>
-                            <Link to={'/write'} style={{ textDecoration: "none", color: "black"}}>
-                                {t('board-title')}
-                            </Link>
-                        </div>
+                <div className='Main-title-writing'>
+                    <Link to={'/write'} style={{ textDecoration: "none", color: "black"}}>
+                        {t('board-title')}
+                    </Link>
                 </div>
             </div>
 
@@ -130,16 +128,9 @@ const Main = () => {
             </div>
 
             <div className='main-board-container'>
-                <div className='big-container2' >       
-                    <New posts={posts} />        
-                    <SideBar/>              
-                </div>
-
-                <div className='page-num'>
-                <Page
-                    totalPosts={totalPosts}
-                />
-                </div>  
+                <div className='grid1-1'><New posts={posts} /></div>
+                <div className='grid1-2'><SideBar/></div>
+                <div className='grid1-3'><Page totalPosts={totalPosts}/></div>  
             </div>
 
             <Footer />
