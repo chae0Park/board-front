@@ -97,18 +97,14 @@ img{
         width: 80%;
         height: auto;
         margin-left: 10%;
-        border: 3px solid orange;
     }
 
     .Post-content {
         height: auto;
         width: 80%;
-        border: 3px dotted orange;
     }
 
-    .Post-top{
-        border: 3px solid orange;
-    }
+
 
     .Post-top {
         flex-direction: column;

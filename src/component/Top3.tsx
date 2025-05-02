@@ -54,7 +54,7 @@ const Top3: React.FC<Top3Props> = ({ post }) => {
 }
 
 const getPreviewTitle = (title:string):string => {
-    return title.length > 28 ? title.slice(0, 28) + '...' : title;
+    return title.length > 23 ? title.slice(0, 23) + '...' : title;
 };
 
 const getPreviewText = (content:string):string => {
