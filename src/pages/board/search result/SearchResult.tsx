@@ -17,14 +17,15 @@ const SearchResult = () => {
 
              <Header />
              
-             <div className='SearchResult-contents'>
-                <div className='SearchResult-desc'>"{keyword}"에 대한 검색결과입니다.</div>
-                <div className='SearchResult-post'>
-                    {searchedPosts.map(post => (
-                        <Post key={post._id} post={post} />
-                    ))}
-                </div> 
-             
+             <div className='SearchResult-contents-container'>
+                <div className='SearchResult-contents'>
+                    <div className='SearchResult-desc'><span>"{keyword}"</span>에 대한 검색결과입니다.</div>
+                    <div className='SearchResult-post'>
+                        {searchedPosts.map(post => (
+                            <Post key={post._id} post={post} />
+                        ))}
+                    </div> 
+                </div>
             </div>
             <Page />
             

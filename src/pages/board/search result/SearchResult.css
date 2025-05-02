@@ -1,10 +1,20 @@
 .SearchResult-contents{
-    position: relative;
-    left: 180px;
+    /* border: 2px solid yellow; */
+    width: 65vw;
+    margin: 0 auto;
 }
 
 .SearchResult-desc{
-    position: relative;
-    left: 70px;
-    bottom: 20px;
+    /* border: 2px solid rgb(255, 108, 71); */
+    padding-bottom: 2em;
+    padding-left: 4.2em;
+}
+
+.SearchResult-desc > span{
+    font-weight: bold;
+}
+
+.SearchResult-post{
+    /* border: 2px solid tomato; */
+    padding-bottom: 1em;
 }
