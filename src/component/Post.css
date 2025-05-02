@@ -141,7 +141,7 @@ img{
 /* 스마트폰 (0 ~ 767px) */
 @media (max-width: 767px) {
     .Post-container {
-        width: 80%;
+        width: 90%;
         height: auto;
         margin-left: 10%;
         margin-bottom: 15px;
